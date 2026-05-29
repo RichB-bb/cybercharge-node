@@ -443,9 +443,18 @@ export function PaymentSection() {
             </p>
           </div>
 
-          <p className="mt-12 max-w-3xl border-t border-zinc-200 pt-6 text-sm leading-6 text-zinc-500 sm:mt-16">
-            {t.payment.disclaimer}
-          </p>
+          <div
+            id="risk-disclosure"
+            className="mt-12 max-w-3xl border-t border-zinc-200 pt-6 sm:mt-16"
+          >
+            <p className="text-xs font-medium uppercase tracking-[0.18em] text-red-600">
+              Risk Disclosure
+            </p>
+            <p className="mt-3 text-sm leading-6 text-zinc-500">
+              Infrastructure allocations are speculative and involve risk. This platform does
+              not guarantee returns. {t.payment.disclaimer}
+            </p>
+          </div>
         </div>
 
         <div className="min-w-0 border border-zinc-200 bg-zinc-50 p-4 sm:p-8">

@@ -6,6 +6,8 @@ import {
   useConnectModal,
 } from "@rainbow-me/rainbowkit";
 import { motion } from "framer-motion";
+import { Menu, X } from "lucide-react";
+import { useState } from "react";
 import { useAccount, useChainId } from "wagmi";
 import { languages, useLanguage } from "@/lib/i18n";
 import { BrandLogo } from "./BrandLogo";
@@ -20,10 +22,20 @@ const navItems = [
   { key: "payment", href: "/#payment" },
 ] as const;
 
+const mobileNavItems = [
+  { label: "Overview", href: "/#top" },
+  { label: "Deployment", href: "/#deployment-map" },
+  { label: "Revenue Model", href: "/#revenue" },
+  { label: "Payment", href: "/#payment" },
+  { label: "Dashboard", href: "/dashboard" },
+  { label: "Risk Disclosure", href: "/#risk-disclosure" },
+] as const;
+
 const supportedChainIds = new Set([1, 8453, 137, 56]);
 
 export function Navbar() {
   const { language, setLanguage, t } = useLanguage();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
     <motion.header
@@ -33,7 +45,7 @@ export function Navbar() {
       className="fixed inset-x-0 top-0 z-50 bg-white/75 pt-[env(safe-area-inset-top)] backdrop-blur-xl"
     >
       <nav className="mx-auto grid h-14 max-w-7xl grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-4 sm:h-16 sm:px-8 lg:grid-cols-[1fr_auto_1fr]">
-        <a href="#top" className="min-w-0">
+        <a href="/#top" className="min-w-0" onClick={() => setIsMenuOpen(false)}>
           <BrandLogo />
         </a>
 
@@ -54,7 +66,7 @@ export function Navbar() {
             aria-label="Language"
             value={language}
             onChange={(event) => setLanguage(event.target.value as typeof language)}
-            className="h-9 max-w-24 rounded-full border border-zinc-200 bg-white/85 px-2 text-xs font-medium text-zinc-700 outline-none transition hover:border-zinc-400 sm:max-w-none sm:px-3"
+            className="hidden h-9 max-w-24 rounded-full border border-zinc-200 bg-white/85 px-2 text-xs font-medium text-zinc-700 outline-none transition hover:border-zinc-400 sm:block sm:max-w-none sm:px-3"
           >
             {languages.map((item) => (
               <option key={item.code} value={item.code}>
@@ -62,9 +74,55 @@ export function Navbar() {
               </option>
             ))}
           </select>
+          <button
+            type="button"
+            aria-expanded={isMenuOpen}
+            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+            onClick={() => setIsMenuOpen((current) => !current)}
+            className="grid size-9 place-items-center rounded-full border border-zinc-200 bg-white/85 text-zinc-950 transition hover:border-zinc-400 lg:hidden"
+          >
+            {isMenuOpen ? <X size={17} /> : <Menu size={17} />}
+          </button>
           <CompactConnectButton />
         </div>
       </nav>
+
+      {isMenuOpen && (
+        <div className="border-t border-zinc-200 bg-white/95 px-4 py-5 shadow-sm backdrop-blur-xl lg:hidden">
+          <div className="mx-auto max-w-7xl">
+            <div className="grid gap-1">
+              {mobileNavItems.map((item) => (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setIsMenuOpen(false)}
+                  className="flex min-h-12 items-center justify-between border-b border-zinc-100 text-base font-medium text-zinc-950"
+                >
+                  {item.label}
+                  <span className="text-zinc-300">/</span>
+                </a>
+              ))}
+            </div>
+            <div className="mt-5">
+              <label className="mb-2 block text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">
+                Language
+              </label>
+              <select
+                aria-label="Language"
+                value={language}
+                onChange={(event) => setLanguage(event.target.value as typeof language)}
+                className="h-12 w-full rounded-none border border-zinc-200 bg-white px-3 text-sm font-medium text-zinc-700 outline-none transition hover:border-zinc-400"
+              >
+                {languages.map((item) => (
+                  <option key={item.code} value={item.code}>
+                    {item.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </div>
+      )}
     </motion.header>
   );
 }

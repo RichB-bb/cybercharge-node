@@ -1,14 +1,16 @@
 "use client";
 
+import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import { useLanguage } from "@/lib/i18n";
 
 export function DashboardHero() {
   const { address, isConnected } = useAccount();
+  const { openConnectModal } = useConnectModal();
   const { language, t } = useLanguage();
   const [userSyncStatus, setUserSyncStatus] = useState("Supabase ready");
-  const displayAddress = address ? `${address.slice(0, 4)}...${address.slice(-4)}` : "0x8A...921F";
+  const displayAddress = address ? `${address.slice(0, 6)}...${address.slice(-4)}` : null;
 
   useEffect(() => {
     if (!isConnected || !address) {
@@ -65,12 +67,26 @@ export function DashboardHero() {
       </div>
 
       <div className="min-w-0 border-t border-zinc-200 pt-5 lg:min-w-72">
-        <p className="text-sm text-zinc-500">{t.dashboard.connectedWallet}</p>
-        <p className="mt-2 truncate font-mono text-2xl font-semibold text-zinc-950">
-          {displayAddress}
+        <p className="text-sm text-zinc-500">
+          {isConnected ? t.dashboard.connectedWallet : "No Wallet Connected"}
         </p>
-        <p className="mt-2 text-sm text-zinc-500">
-          {isConnected ? "Web3 wallet connected" : t.dashboard.notConnected}
+        {displayAddress ? (
+          <p className="mt-2 truncate font-mono text-2xl font-semibold text-zinc-950">
+            {displayAddress}
+          </p>
+        ) : (
+          <button
+            type="button"
+            onClick={openConnectModal}
+            className="mt-4 h-11 w-full bg-zinc-950 px-4 text-sm font-semibold text-white transition hover:bg-zinc-800"
+          >
+            Connect Wallet
+          </button>
+        )}
+        <p className="mt-3 text-sm leading-6 text-zinc-500">
+          {isConnected
+            ? "Web3 wallet connected."
+            : "Connect Wallet to view your allocations and transactions."}
         </p>
         <p className="mt-1 text-xs text-zinc-400">{userSyncStatus}</p>
       </div>

@@ -1,26 +1,37 @@
 "use client";
 
-import { BatteryCharging } from "lucide-react";
-import { useLanguage } from "@/lib/i18n";
+import { BrandLogo } from "./BrandLogo";
+
+const footerLinks = [
+  { label: "Terms of Service", href: "/terms" },
+  { label: "Privacy Policy", href: "/privacy" },
+  { label: "Risk Disclosure", href: "/#risk-disclosure" },
+  { label: "Contact", href: "mailto:contact@tslcharge.cc" },
+] as const;
 
 export function Footer() {
-  const { t } = useLanguage();
-
   return (
-    <footer className="border-t border-zinc-200 bg-white px-4 py-10 pb-[calc(env(safe-area-inset-bottom)+2.5rem)] sm:px-8">
-      <div className="mx-auto flex max-w-7xl flex-col gap-6 text-sm text-zinc-500 lg:flex-row lg:items-start lg:justify-between">
-        <div>
-          <div className="flex items-center gap-3 text-zinc-950">
-            <BatteryCharging size={18} className="text-red-600" />
-            {t.footer.brand}
-          </div>
-          <p className="mt-3 max-w-xl">
-            {t.footer.disclosure}
+    <footer className="border-t border-zinc-200 bg-white px-4 py-12 pb-[calc(env(safe-area-inset-bottom)+3rem)] sm:px-8 sm:py-16">
+      <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[1fr_auto] lg:items-start">
+        <div className="max-w-xl">
+          <BrandLogo />
+          <p className="mt-5 text-sm leading-6 text-zinc-500">
+            Infrastructure allocation platform for EV charging deployment.
           </p>
+          <p className="mt-6 text-sm text-zinc-400">© 2026 CyberCharge</p>
         </div>
-        <p className="max-w-xl">
-          {t.footer.mvp}
-        </p>
+
+        <nav className="grid gap-3 text-sm font-medium text-zinc-700 sm:grid-cols-2 lg:min-w-96">
+          {footerLinks.map((link) => (
+            <a
+              key={link.label}
+              href={link.href}
+              className="transition hover:text-zinc-950"
+            >
+              {link.label}
+            </a>
+          ))}
+        </nav>
       </div>
     </footer>
   );

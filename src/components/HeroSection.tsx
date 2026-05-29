@@ -53,6 +53,12 @@ export function HeroSection() {
               {t.hero.deployment}
             </a>
           </div>
+          <a
+            href="/dashboard"
+            className="mt-5 inline-flex text-sm font-semibold text-white underline decoration-white/45 underline-offset-8 transition hover:decoration-white"
+          >
+            View Investor Dashboard
+          </a>
         </motion.div>
       </div>
     </section>
