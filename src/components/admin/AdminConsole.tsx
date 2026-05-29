@@ -48,6 +48,12 @@ type CustomerDetail = {
   rewards: RewardRecord[];
 };
 
+type AdminDebugState = {
+  adminKeyConfigured: boolean;
+  receivedKey: boolean;
+  keyMatched: boolean;
+};
+
 type CustomerAdminStatus = "normal" | "vip" | "risk" | "frozen";
 
 const sidebarItems: Array<{ id: AdminTab; label: string }> = [
@@ -73,6 +79,7 @@ export function AdminConsole() {
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [authChecked, setAuthChecked] = useState(false);
   const [authError, setAuthError] = useState("");
+  const [adminKeyConfigured, setAdminKeyConfigured] = useState<boolean | null>(null);
   const [overview, setOverview] = useState<OverviewStats>(emptyStats);
   const [customers, setCustomers] = useState<CustomerSummary[]>([]);
   const [transactions, setTransactions] = useState<TransactionRow[]>([]);
@@ -83,6 +90,8 @@ export function AdminConsole() {
   const [notice, setNotice] = useState("");
 
   useEffect(() => {
+    void loadAdminDebugState();
+
     const urlKey = new URLSearchParams(window.location.search).get("key");
     const savedKey = window.localStorage.getItem("cybercharge_admin_device_key");
     const nextKey = urlKey ?? savedKey ?? "";
@@ -94,6 +103,16 @@ export function AdminConsole() {
 
     void verifyKey(nextKey);
   }, []);
+
+  async function loadAdminDebugState() {
+    try {
+      const response = await fetch("/api/admin/debug", { cache: "no-store" });
+      const data = (await response.json()) as AdminDebugState;
+      setAdminKeyConfigured(data.adminKeyConfigured);
+    } catch {
+      setAdminKeyConfigured(false);
+    }
+  }
 
   useEffect(() => {
     if (!isAuthorized || !deviceKey) return;
@@ -220,12 +239,17 @@ export function AdminConsole() {
   }
 
   if (!authChecked) {
-    return <AdminAccessShell title="正在校验设备访问权限..." />;
+    return (
+      <AdminAccessShell title="正在校验设备访问权限...">
+        <AdminKeyConfigured configured={adminKeyConfigured} />
+      </AdminAccessShell>
+    );
   }
 
   if (!isAuthorized) {
     return (
       <AdminAccessShell title="无权访问">
+        <AdminKeyConfigured configured={adminKeyConfigured} />
         <p className="mt-3 text-sm leading-6 text-zinc-500">
           请使用设备密钥访问：/admin?key=你的设备密钥
         </p>
@@ -258,6 +282,7 @@ export function AdminConsole() {
           CyberCharge
         </p>
         <h1 className="mt-3 text-2xl font-semibold tracking-tight">后台管理</h1>
+        <AdminKeyConfigured configured={adminKeyConfigured} compact />
         <nav className="mt-8 flex gap-2 overflow-x-auto lg:flex-col lg:overflow-visible">
           {sidebarItems.map((item) => (
             <button
@@ -766,6 +791,26 @@ function AdminAccessShell({
         {children}
       </section>
     </main>
+  );
+}
+
+function AdminKeyConfigured({
+  compact = false,
+  configured,
+}: {
+  compact?: boolean;
+  configured: boolean | null;
+}) {
+  const value = configured === null ? "checking" : String(configured);
+
+  return (
+    <p
+      className={`mt-4 text-xs font-medium uppercase tracking-[0.18em] ${
+        configured ? "text-zinc-500" : "text-red-600"
+      } ${compact ? "lg:mt-6" : ""}`}
+    >
+      Configured: {value}
+    </p>
   );
 }
 

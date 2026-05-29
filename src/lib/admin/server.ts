@@ -20,12 +20,30 @@ export type AdminRewardRecord = {
 };
 
 export function isAdminDeviceRequest(request: Request) {
-  const expectedKey = process.env.ADMIN_DEVICE_KEY;
+  const expectedKey = getAdminDeviceKey();
   const providedKey =
     request.headers.get("x-admin-device-key") ??
     new URL(request.url).searchParams.get("key");
 
-  return Boolean(expectedKey && providedKey && providedKey === expectedKey);
+  return Boolean(expectedKey && providedKey && providedKey.trim() === expectedKey);
+}
+
+export function getAdminDeviceKey() {
+  return process.env.ADMIN_DEVICE_KEY?.trim() ?? "";
+}
+
+export function getAdminDebugState(request: Request) {
+  const expectedKey = getAdminDeviceKey();
+  const providedKey =
+    request.headers.get("x-admin-device-key") ??
+    new URL(request.url).searchParams.get("key") ??
+    "";
+
+  return {
+    adminKeyConfigured: Boolean(expectedKey),
+    receivedKey: Boolean(providedKey),
+    keyMatched: Boolean(expectedKey && providedKey && providedKey.trim() === expectedKey),
+  };
 }
 
 export function unauthorizedResponse() {
