@@ -1,7 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 
 export type RewardStatus = "pending" | "approved" | "paid" | "rejected";
 export type RewardType = "referral" | "revenue_share" | "manual_bonus";
@@ -29,7 +27,7 @@ export function isAdminDeviceRequest(request: Request) {
 }
 
 export function getAdminDeviceKey() {
-  return process.env.ADMIN_DEVICE_KEY?.trim() ?? "";
+  return getRuntimeEnvValue("ADMIN_DEVICE_KEY");
 }
 
 export function getAdminDebugState(request: Request) {
@@ -51,6 +49,8 @@ export function unauthorizedResponse() {
 }
 
 export function getAdminSupabaseClient() {
+  const { supabaseUrl, serviceRoleKey } = getAdminSupabaseRuntimeEnv();
+
   if (!supabaseUrl || !serviceRoleKey) {
     throw new Error("Supabase admin environment variables are not configured.");
   }
@@ -63,9 +63,12 @@ export function getAdminSupabaseClient() {
 }
 
 export function getAdminSupabaseConfigState() {
+  const { anonKey, serviceRoleKey, supabaseUrl } = getAdminSupabaseRuntimeEnv();
+
   return {
     supabaseConfigured: Boolean(supabaseUrl && serviceRoleKey),
     supabaseUrlConfigured: Boolean(supabaseUrl),
+    anonKeyConfigured: Boolean(anonKey),
     serviceRoleKeyConfigured: Boolean(serviceRoleKey),
   };
 }
@@ -110,4 +113,32 @@ function serializeAdminError(error: unknown) {
     details: record.details,
     hint: record.hint,
   };
+}
+
+function getAdminSupabaseRuntimeEnv() {
+  return {
+    supabaseUrl: getRuntimeEnvValue("NEXT_PUBLIC_SUPABASE_URL"),
+    anonKey: getRuntimeEnvValue("NEXT_PUBLIC_SUPABASE_ANON_KEY"),
+    serviceRoleKey: getRuntimeEnvValue("SUPABASE_SERVICE_ROLE_KEY"),
+  };
+}
+
+function getRuntimeEnvValue(name: string) {
+  const processValue = process.env[name]?.trim();
+
+  if (processValue) {
+    return processValue;
+  }
+
+  try {
+    const cloudflareEnv = getCloudflareContext({ async: false }).env as Record<
+      string,
+      unknown
+    >;
+    const bindingValue = cloudflareEnv[name];
+
+    return typeof bindingValue === "string" ? bindingValue.trim() : "";
+  } catch {
+    return "";
+  }
 }
