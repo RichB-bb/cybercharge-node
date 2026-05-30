@@ -62,6 +62,14 @@ export function getAdminSupabaseClient() {
   });
 }
 
+export function getAdminSupabaseConfigState() {
+  return {
+    supabaseConfigured: Boolean(supabaseUrl && serviceRoleKey),
+    supabaseUrlConfigured: Boolean(supabaseUrl),
+    serviceRoleKeyConfigured: Boolean(serviceRoleKey),
+  };
+}
+
 export function getClientIp(request: Request) {
   const cfIp = request.headers.get("cf-connecting-ip");
   const realIp = request.headers.get("x-real-ip");
