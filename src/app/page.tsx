@@ -1,15 +1,10 @@
-import { FeaturesSection } from "@/components/FeaturesSection";
+import { DeploymentMap } from "@/components/DeploymentMap";
 import { Footer } from "@/components/Footer";
 import { HeroSection } from "@/components/HeroSection";
 import { ImmersiveImageSection } from "@/components/ImmersiveImageSection";
-import { InfrastructureOverview } from "@/components/InfrastructureOverview";
 import { Navbar } from "@/components/Navbar";
 import { PaymentSection } from "@/components/PaymentSection";
 import { PaymentTimeline } from "@/components/PaymentTimeline";
-import { PurchaseFlow } from "@/components/PurchaseFlow";
-import { RevenueModel } from "@/components/RevenueModel";
-import { DeploymentMap } from "@/components/DeploymentMap";
-import { WhyEVInfrastructure } from "@/components/WhyEVInfrastructure";
 
 export default function Home() {
   return (
@@ -24,14 +19,9 @@ export default function Home() {
         image="/images/deployment.avif"
         copyKey="assets"
       />
-      <RevenueModel />
-      <InfrastructureOverview />
       <DeploymentMap />
-      <WhyEVInfrastructure />
-      <FeaturesSection />
       <PaymentTimeline />
       <PaymentSection />
-      <PurchaseFlow />
       <Footer />
     </main>
   );

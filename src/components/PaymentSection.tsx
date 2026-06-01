@@ -141,6 +141,7 @@ export function PaymentSection() {
   const [latestTxHash, setLatestTxHash] = useState<`0x${string}` | null>(null);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [isSuccessOpen, setIsSuccessOpen] = useState(false);
+  const [isManualPaymentOpen, setIsManualPaymentOpen] = useState(false);
   const [copyMessage, setCopyMessage] = useState("");
 
   useEffect(() => {
@@ -365,55 +366,30 @@ export function PaymentSection() {
   }
 
   return (
-    <section id="payment" className="bg-white px-4 py-20 sm:px-8 sm:py-32">
-      <div className="mx-auto grid max-w-7xl min-w-0 gap-12 sm:gap-20 lg:grid-cols-[1fr_0.82fr] lg:items-start">
+    <section id="payment" className="bg-white px-4 py-12 sm:px-8 sm:py-20">
+      <div className="mx-auto grid max-w-7xl min-w-0 gap-8 lg:grid-cols-[0.82fr_1fr] lg:items-start lg:gap-12">
         <div className="min-w-0">
           <p className="text-xs font-medium uppercase tracking-[0.22em] text-red-600 sm:text-sm sm:tracking-[0.28em]">
             {t.payment.eyebrow}
           </p>
-          <h2 className="mt-4 text-4xl font-semibold tracking-tight text-zinc-950 sm:mt-5 sm:text-7xl">
+          <h2 className="mt-3 text-4xl font-semibold tracking-tight text-zinc-950 sm:mt-4 sm:text-6xl">
             {t.payment.title}
           </h2>
-          <p className="mt-4 max-w-3xl text-base leading-7 text-zinc-500 sm:mt-6 sm:text-2xl sm:leading-9">
+          <p className="mt-4 max-w-2xl text-base leading-7 text-zinc-500 sm:text-xl sm:leading-8">
             {t.payment.subtitle}
           </p>
 
-          <div className="mt-12 border-y border-zinc-200 py-8 sm:mt-20 sm:py-10">
-            <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
-              <div>
-                <p className="text-xs font-medium uppercase tracking-[0.16em] text-zinc-500 sm:text-sm">
-                  {t.payment.baseRule}
-                </p>
-                <h3 className="mt-3 text-2xl font-semibold tracking-tight text-zinc-950 sm:mt-4 sm:text-3xl">
-                  {t.payment.fullNode}
-                </h3>
-              </div>
-              <div className="grid gap-6 text-lg text-zinc-700 sm:grid-cols-2">
-                <p>
-                  <span className="block text-sm text-zinc-500">
-                    {t.payment.allocation}
-                  </span>
-                  100%
-                </p>
-                <p>
-                  <span className="block text-sm text-zinc-500">{t.payment.referenceValue}</span>
-                  1999 USDT
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-10 sm:mt-14">
-            <p className="mb-4 text-xs font-medium uppercase tracking-[0.16em] text-zinc-500 sm:mb-5 sm:text-sm">
+          <div className="mt-8 sm:mt-10">
+            <p className="mb-3 text-xs font-medium uppercase tracking-[0.16em] text-zinc-500 sm:text-sm">
               {t.payment.allocationSelector}
             </p>
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <div className="grid grid-cols-4 gap-2 sm:gap-3">
               {allocations.map((allocation) => (
                 <button
                   key={allocation}
                   type="button"
                   onClick={() => setSelectedAllocation(allocation)}
-                  className={`h-14 border text-lg font-semibold transition sm:h-14 ${
+                  className={`h-14 border text-base font-semibold transition sm:text-lg ${
                     selectedAllocation === allocation
                       ? "border-zinc-950 bg-zinc-950 text-white"
                       : "border-zinc-200 bg-white text-zinc-700 hover:border-zinc-400"
@@ -425,140 +401,107 @@ export function PaymentSection() {
             </div>
           </div>
 
-          <div className="mt-12 max-w-3xl border-t border-zinc-200 pt-8 sm:mt-16">
+          <div className="mt-8 border-y border-zinc-200 py-6">
             <p className="text-xs font-medium uppercase tracking-[0.16em] text-zinc-500 sm:text-sm">
               {t.payment.summary}
             </p>
-            <h3 className="mt-4 text-3xl font-semibold tracking-tight text-zinc-950 sm:text-4xl">
+            <h3 className="mt-3 text-3xl font-semibold tracking-tight text-zinc-950 sm:text-4xl">
               {allocationLabel}
             </h3>
-            <div className="mt-5 grid gap-3 text-lg text-zinc-700 sm:mt-6 sm:grid-cols-2 sm:text-xl">
+            <div className="mt-4 grid gap-2 text-base text-zinc-700 sm:grid-cols-2 sm:text-lg">
               <p>≈ {formatStableAmount(usdtAmount, language)} USDT</p>
               <p>≈ {formatEthAmount(ethAmount, language)} ETH</p>
             </div>
-            <p className="mt-4 text-sm text-zinc-500">
+            <p className="mt-3 text-xs leading-5 text-zinc-500 sm:text-sm">
               {ethPrice
                 ? `${t.payment.ethEstimateLive} ${formatStableAmount(ethPrice, language)} USDT/ETH.`
                 : t.payment.ethEstimate}
             </p>
           </div>
-
-          <div
-            id="risk-disclosure"
-            className="mt-12 max-w-3xl border-t border-zinc-200 pt-6 sm:mt-16"
-          >
-            <p className="text-xs font-medium uppercase tracking-[0.18em] text-red-600">
-              Risk Disclosure
-            </p>
-            <p className="mt-3 text-sm leading-6 text-zinc-500">
-              Infrastructure allocations are speculative and involve risk. This platform does
-              not guarantee returns. {t.payment.disclaimer}
-            </p>
-          </div>
         </div>
 
-        <div className="min-w-0 border border-zinc-200 bg-zinc-50 p-4 sm:p-8">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
+        <div className="min-w-0 border border-zinc-200 bg-zinc-50 p-4 sm:p-6 lg:p-8">
+          <div className="flex flex-col gap-3 border-b border-zinc-200 pb-5 sm:flex-row sm:items-start sm:justify-between">
             <div className="min-w-0">
-              <p className="text-xs font-medium uppercase tracking-[0.16em] text-zinc-500 sm:text-sm sm:tracking-[0.2em]">
+              <p className="text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">
                 {t.payment.panel}
               </p>
-              <h3 className="mt-3 text-2xl font-semibold tracking-tight text-zinc-950">
+              <h3 className="mt-2 text-2xl font-semibold tracking-tight text-zinc-950">
                 {allocationLabel}
               </h3>
             </div>
-            <p className="text-2xl font-semibold text-zinc-950 sm:text-right">
-              {paymentAmount} {selectedToken}
-            </p>
+            <div className="sm:text-right">
+              <p className="text-xs font-medium uppercase tracking-[0.14em] text-zinc-500">
+                Payment Amount
+              </p>
+              <p className="mt-1 text-2xl font-semibold text-zinc-950">
+                {paymentAmount} {selectedToken}
+              </p>
+            </div>
           </div>
 
-          <div className="mt-8 min-w-0 overflow-hidden">
+          <div className="mt-6 min-w-0 overflow-hidden">
             <p className="mb-3 text-sm font-medium text-zinc-700">{t.payment.wallet}</p>
             <PaymentConnectButton />
           </div>
 
-          <div className="mt-8">
-            <p className="mb-3 text-sm font-medium text-zinc-700">{t.payment.network}</p>
-            <div className="grid grid-cols-2 gap-2">
-              {chains.map((chain) => (
-                <button
-                  key={chain.id}
-                  type="button"
-                  onClick={() => setSelectedChain(chain.label)}
-                  className={`h-12 border px-3 text-sm font-medium transition sm:h-11 ${
-                    selectedChain === chain.label
-                      ? "border-zinc-950 bg-white text-zinc-950"
-                      : "border-zinc-200 bg-white text-zinc-500 hover:border-zinc-400"
-                  }`}
-                >
-                  {chain.label}
-                </button>
-              ))}
+          <div className="mt-6 grid gap-5 sm:grid-cols-2">
+            <div>
+              <p className="mb-3 text-sm font-medium text-zinc-700">{t.payment.network}</p>
+              <div className="grid grid-cols-2 gap-2">
+                {chains.map((chain) => (
+                  <button
+                    key={chain.id}
+                    type="button"
+                    onClick={() => setSelectedChain(chain.label)}
+                    className={`h-12 border px-3 text-sm font-medium transition ${
+                      selectedChain === chain.label
+                        ? "border-zinc-950 bg-white text-zinc-950"
+                        : "border-zinc-200 bg-white text-zinc-500 hover:border-zinc-400"
+                    }`}
+                  >
+                    {chain.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <p className="mb-3 text-sm font-medium text-zinc-700">{t.payment.asset}</p>
+              <div className="grid grid-cols-3 gap-2">
+                {tokens.map((token) => (
+                  <button
+                    key={token}
+                    type="button"
+                    onClick={() => setSelectedToken(token)}
+                    className={`h-12 border px-3 text-sm font-medium transition ${
+                      selectedToken === token
+                        ? "border-zinc-950 bg-zinc-950 text-white"
+                        : "border-zinc-200 bg-white text-zinc-500 hover:border-zinc-400"
+                    }`}
+                  >
+                    {token}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
 
-          <div className="mt-8">
-            <p className="mb-3 text-sm font-medium text-zinc-700">{t.payment.asset}</p>
-            <div className="grid grid-cols-3 gap-2">
-              {tokens.map((token) => (
-                <button
-                  key={token}
-                  type="button"
-                  onClick={() => setSelectedToken(token)}
-                  className={`h-12 border px-3 text-sm font-medium transition sm:h-11 ${
-                    selectedToken === token
-                      ? "border-zinc-950 bg-zinc-950 text-white"
-                      : "border-zinc-200 bg-white text-zinc-500 hover:border-zinc-400"
-                  }`}
-                >
-                  {token}
-                </button>
-              ))}
-            </div>
+          <div className="mt-6 grid gap-3 text-sm">
+            <PaymentDetail label="Payment Method" value={paymentMethod} />
+            {selectedTokenConfig.paymentType === "erc20" && selectedTokenConfig.contractAddress && (
+              <PaymentDetail
+                label="Token Contract"
+                value={shortenAddress(selectedTokenConfig.contractAddress)}
+              />
+            )}
           </div>
-
-          <div className="mt-10 grid gap-5 sm:grid-cols-[148px_1fr] sm:items-start sm:gap-6">
-            <div className="grid size-[132px] place-items-center border border-zinc-200 bg-white sm:size-[148px]">
-              <QRCodeSVG value={treasuryWallet} size={104} bgColor="#ffffff" fgColor="#050505" />
-            </div>
-            <div className="space-y-4 text-sm">
-              <p className="text-sm font-medium text-zinc-950">
-                Scan to copy receiving wallet address
-              </p>
-              <PaymentDetail label={t.payment.allocation} value={`${selectedAllocation}%`} />
-              <PaymentDetail label="You Pay" value={`${transferDisplayAmount} ${selectedToken}`} />
-              <PaymentDetail label="Network" value={selectedChain} />
-              <PaymentDetail label="Asset" value={selectedToken} />
-              <PaymentDetail label="Payment Method" value={paymentMethod} />
-              {selectedTokenConfig.paymentType === "erc20" &&
-                selectedTokenConfig.contractAddress && (
-                  <PaymentDetail
-                    label="Token Contract"
-                    value={shortenAddress(selectedTokenConfig.contractAddress)}
-                  />
-                )}
-              <p className="text-xs leading-5 text-zinc-500">
-                For exact token payment, use the Purchase Allocation button.
-              </p>
-            </div>
-          </div>
-
-          <div className="mt-5">
-            <button
-              type="button"
-              onClick={() => copyToClipboard(treasuryWallet, "Wallet address")}
-              className="h-11 w-full border border-zinc-200 px-3 text-sm font-semibold text-zinc-950 transition hover:border-zinc-400"
-            >
-              Copy Wallet Address
-            </button>
-          </div>
-          {copyMessage && <p className="mt-3 text-sm text-zinc-500">{copyMessage}</p>}
 
           <button
             type="button"
             onClick={handlePurchaseClick}
             disabled={isProcessing || !isPaymentSupported}
-            className="mt-8 h-12 w-full bg-zinc-950 px-4 text-sm font-semibold text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:bg-zinc-400"
+            className="mt-7 min-h-12 w-full bg-zinc-950 px-4 text-base font-semibold text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:bg-zinc-400"
           >
             {purchaseStatus === "processing" && "Processing Infrastructure Allocation..."}
             {purchaseStatus === "pending" && "Waiting for Confirmation..."}
@@ -566,9 +509,7 @@ export function PaymentSection() {
           </button>
 
           {!isPaymentSupported && (
-            <p className="mt-4 text-sm leading-6 text-zinc-500">
-              {unsupportedPaymentMessage}
-            </p>
+            <p className="mt-4 text-sm leading-6 text-zinc-500">{unsupportedPaymentMessage}</p>
           )}
 
           {purchaseMessage && (
@@ -590,6 +531,46 @@ export function PaymentSection() {
               View on Explorer
             </a>
           )}
+
+          <div className="mt-7 border-t border-zinc-200 pt-5">
+            <button
+              type="button"
+              onClick={() => setIsManualPaymentOpen((open) => !open)}
+              className="flex h-11 w-full items-center justify-between border border-zinc-200 bg-white px-4 text-sm font-semibold text-zinc-950 transition hover:border-zinc-400"
+            >
+              <span>Manual Payment (Optional)</span>
+              <span className="text-zinc-400">{isManualPaymentOpen ? "-" : "+"}</span>
+            </button>
+
+            {isManualPaymentOpen && (
+              <div className="mt-4 grid gap-4 sm:grid-cols-[120px_1fr] sm:items-start">
+                <div className="grid size-[120px] place-items-center border border-zinc-200 bg-white">
+                  <QRCodeSVG value={treasuryWallet} size={92} bgColor="#ffffff" fgColor="#050505" />
+                </div>
+                <div className="space-y-3 text-sm">
+                  <p className="font-medium text-zinc-950">Scan to copy receiving wallet address</p>
+                  <PaymentDetail label="You Pay" value={`${transferDisplayAmount} ${selectedToken}`} />
+                  <PaymentDetail label="Network" value={selectedChain} />
+                  <PaymentDetail label="Asset" value={selectedToken} />
+                  <p className="text-xs leading-5 text-zinc-500">
+                    For exact amount payment, use the Purchase Allocation button.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => copyToClipboard(treasuryWallet, "Wallet address")}
+                    className="h-10 w-full border border-zinc-200 px-3 text-sm font-semibold text-zinc-950 transition hover:border-zinc-400"
+                  >
+                    Copy Wallet Address
+                  </button>
+                  {copyMessage && <p className="text-sm text-zinc-500">{copyMessage}</p>}
+                </div>
+              </div>
+            )}
+          </div>
+
+          <p id="risk-disclosure" className="mt-5 text-xs leading-5 text-zinc-500">
+            Participation involves risk. Review risk disclosure before proceeding.
+          </p>
         </div>
       </div>
       {isConfirmOpen && (
@@ -745,10 +726,16 @@ function PaymentSuccessDialog({
           {title}
         </h3>
         <p className="mx-auto mt-4 max-w-xs text-base leading-7 text-zinc-500">{message}</p>
+        <a
+          href="/dashboard"
+          className="mt-7 inline-flex h-11 w-full items-center justify-center border border-zinc-950 px-4 text-sm font-semibold text-zinc-950 transition hover:bg-zinc-950 hover:text-white"
+        >
+          View Investor Dashboard
+        </a>
         <button
           type="button"
           onClick={onClose}
-          className="mt-8 h-11 w-full bg-zinc-950 px-4 text-sm font-semibold text-white transition hover:bg-zinc-800"
+          className="mt-3 h-11 w-full bg-zinc-950 px-4 text-sm font-semibold text-white transition hover:bg-zinc-800"
         >
           {closeLabel}
         </button>
