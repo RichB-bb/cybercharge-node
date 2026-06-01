@@ -13,28 +13,23 @@ import { languages, useLanguage } from "@/lib/i18n";
 import { BrandLogo } from "./BrandLogo";
 
 const navItems = [
-  { key: "dashboard", href: "/dashboard" },
-  { key: "nodes", href: "/#payment" },
-  { key: "whyEv", href: "/#why-ev" },
-  { key: "highlights", href: "/#features" },
-  { key: "revenue", href: "/#revenue" },
-  { key: "network", href: "/#deployment-map" },
-  { key: "payment", href: "/#payment" },
+  { label: "Infrastructure", href: "/#infrastructure" },
+  { label: "Network", href: "/#deployment-map" },
+  { label: "Payment", href: "/#payment" },
+  { label: "Dashboard", href: "/dashboard" },
 ] as const;
 
 const mobileNavItems = [
-  { label: "Overview", href: "/#top" },
-  { label: "Deployment", href: "/#deployment-map" },
-  { label: "Revenue Model", href: "/#revenue" },
+  { label: "Infrastructure", href: "/#infrastructure" },
+  { label: "Network", href: "/#deployment-map" },
   { label: "Payment", href: "/#payment" },
   { label: "Dashboard", href: "/dashboard" },
-  { label: "Risk Disclosure", href: "/#risk-disclosure" },
 ] as const;
 
 const supportedChainIds = new Set([1, 8453, 137, 56]);
 
 export function Navbar() {
-  const { language, setLanguage, t } = useLanguage();
+  const { language, setLanguage } = useLanguage();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
@@ -52,16 +47,22 @@ export function Navbar() {
         <div className="hidden items-center gap-7 lg:flex">
           {navItems.map((item) => (
             <a
-              key={item.key}
+              key={item.href}
               href={item.href}
               className="text-sm font-medium text-zinc-700 transition hover:text-zinc-950"
             >
-              {t.nav[item.key]}
+              {item.label}
             </a>
           ))}
         </div>
 
         <div className="flex min-w-0 items-center gap-1.5 justify-self-end sm:gap-2">
+          <a
+            href="/#payment"
+            className="hidden h-9 items-center rounded-full bg-zinc-950 px-4 text-xs font-semibold text-white transition hover:bg-zinc-800 xl:inline-flex"
+          >
+            Purchase Allocation
+          </a>
           <select
             aria-label="Language"
             value={language}
@@ -103,6 +104,13 @@ export function Navbar() {
                 </a>
               ))}
             </div>
+            <a
+              href="/#payment"
+              onClick={() => setIsMenuOpen(false)}
+              className="mt-5 flex h-12 items-center justify-center bg-zinc-950 px-4 text-sm font-semibold text-white transition hover:bg-zinc-800"
+            >
+              Purchase Allocation
+            </a>
             <div className="mt-5">
               <label className="mb-2 block text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">
                 Language

@@ -3,6 +3,7 @@
 import { useLanguage } from "@/lib/i18n";
 
 type ImmersiveImageSectionProps = {
+  id?: string;
   image: string;
   title?: string;
   subtitle?: string;
@@ -10,6 +11,7 @@ type ImmersiveImageSectionProps = {
 };
 
 export function ImmersiveImageSection({
+  id,
   image,
   title,
   subtitle,
@@ -31,6 +33,7 @@ export function ImmersiveImageSection({
 
   return (
     <section
+      id={id}
       className="relative flex min-h-[100svh] items-center justify-center bg-cover bg-center px-4 py-20 text-center sm:px-8"
       style={{ backgroundImage: `url(${image})` }}
     >
