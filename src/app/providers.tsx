@@ -1,6 +1,7 @@
 "use client";
 
 import { getDefaultConfig, RainbowKitProvider } from "@rainbow-me/rainbowkit";
+import type { Locale } from "@rainbow-me/rainbowkit";
 import {
   binanceWallet,
   coinbaseWallet,
@@ -16,7 +17,7 @@ import { base, bsc, mainnet, polygon } from "wagmi/chains";
 import { WagmiProvider } from "wagmi";
 import { useState } from "react";
 import { WalletUserSync } from "@/components/WalletUserSync";
-import { LanguageProvider } from "@/lib/i18n";
+import { LanguageProvider, type Language, useLanguage } from "@/lib/i18n";
 
 const walletConnectProjectId =
   process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID?.trim();
@@ -79,18 +80,40 @@ const config = getDefaultConfig({
 });
 
 export function Providers({ children }: { children: React.ReactNode }) {
-  const [queryClient] = useState(() => new QueryClient());
-
   return (
     <LanguageProvider>
-      <WagmiProvider config={config} reconnectOnMount>
-        <QueryClientProvider client={queryClient}>
-          <RainbowKitProvider>
-            <WalletUserSync />
-            {children}
-          </RainbowKitProvider>
-        </QueryClientProvider>
-      </WagmiProvider>
+      <Web3Providers>{children}</Web3Providers>
     </LanguageProvider>
   );
+}
+
+function Web3Providers({ children }: { children: React.ReactNode }) {
+  const [queryClient] = useState(() => new QueryClient());
+  const { language } = useLanguage();
+  const rainbowKitLocale = getRainbowKitLocale(language);
+
+  return (
+    <WagmiProvider config={config} reconnectOnMount>
+      <QueryClientProvider client={queryClient}>
+        <RainbowKitProvider locale={rainbowKitLocale}>
+          <WalletUserSync />
+          {children}
+        </RainbowKitProvider>
+      </QueryClientProvider>
+    </WagmiProvider>
+  );
+}
+
+function getRainbowKitLocale(language: Language): Locale {
+  const locales: Record<Language, Locale> = {
+    ar: "ar-AR",
+    en: "en-US",
+    es: "es-419",
+    fr: "fr-FR",
+    ja: "ja-JP",
+    ko: "ko-KR",
+    zh: "zh-CN",
+  };
+
+  return locales[language];
 }

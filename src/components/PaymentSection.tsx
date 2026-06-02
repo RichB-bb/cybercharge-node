@@ -432,7 +432,7 @@ export function PaymentSection() {
             </div>
             <div className="sm:text-right">
               <p className="text-xs font-medium uppercase tracking-[0.14em] text-zinc-500">
-                Payment Amount
+                {t.payment.paymentAmount}
               </p>
               <p className="mt-1 text-2xl font-semibold text-zinc-950">
                 {paymentAmount} {selectedToken}
@@ -488,10 +488,10 @@ export function PaymentSection() {
           </div>
 
           <div className="mt-6 grid gap-3 text-sm">
-            <PaymentDetail label="Payment Method" value={paymentMethod} />
+            <PaymentDetail label={t.payment.paymentMethod} value={paymentMethod} />
             {selectedTokenConfig.paymentType === "erc20" && selectedTokenConfig.contractAddress && (
               <PaymentDetail
-                label="Token Contract"
+                label={t.payment.tokenContract}
                 value={shortenAddress(selectedTokenConfig.contractAddress)}
               />
             )}
@@ -503,9 +503,11 @@ export function PaymentSection() {
             disabled={isProcessing || !isPaymentSupported}
             className="mt-7 min-h-12 w-full bg-zinc-950 px-4 text-base font-semibold text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:bg-zinc-400"
           >
-            {purchaseStatus === "processing" && "Processing Infrastructure Allocation..."}
-            {purchaseStatus === "pending" && "Waiting for Confirmation..."}
-            {purchaseStatus !== "processing" && purchaseStatus !== "pending" && "Purchase Allocation"}
+            {purchaseStatus === "processing" && t.payment.processingAllocation}
+            {purchaseStatus === "pending" && t.payment.waitingConfirmation}
+            {purchaseStatus !== "processing" &&
+              purchaseStatus !== "pending" &&
+              t.payment.purchaseAllocation}
           </button>
 
           {!isPaymentSupported && (

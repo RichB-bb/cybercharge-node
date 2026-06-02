@@ -13,23 +13,16 @@ import { languages, useLanguage } from "@/lib/i18n";
 import { BrandLogo } from "./BrandLogo";
 
 const navItems = [
-  { label: "Infrastructure", href: "/#infrastructure" },
-  { label: "Network", href: "/#deployment-map" },
-  { label: "Payment", href: "/#payment" },
-  { label: "Dashboard", href: "/dashboard" },
-] as const;
-
-const mobileNavItems = [
-  { label: "Infrastructure", href: "/#infrastructure" },
-  { label: "Network", href: "/#deployment-map" },
-  { label: "Payment", href: "/#payment" },
-  { label: "Dashboard", href: "/dashboard" },
+  { labelKey: "infrastructure", href: "/#infrastructure" },
+  { labelKey: "network", href: "/#deployment-map" },
+  { labelKey: "payment", href: "/#payment" },
+  { labelKey: "dashboard", href: "/dashboard" },
 ] as const;
 
 const supportedChainIds = new Set([1, 8453, 137, 56]);
 
 export function Navbar() {
-  const { language, setLanguage } = useLanguage();
+  const { language, setLanguage, t } = useLanguage();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
@@ -51,7 +44,7 @@ export function Navbar() {
               href={item.href}
               className="text-sm font-medium text-zinc-700 transition hover:text-zinc-950"
             >
-              {item.label}
+              {t.nav[item.labelKey]}
             </a>
           ))}
         </div>
@@ -61,10 +54,10 @@ export function Navbar() {
             href="/#payment"
             className="hidden h-9 items-center rounded-full bg-zinc-950 px-4 text-xs font-semibold text-white transition hover:bg-zinc-800 xl:inline-flex"
           >
-            Purchase Allocation
+            {t.nav.purchaseAllocation}
           </a>
           <select
-            aria-label="Language"
+            aria-label={t.nav.language}
             value={language}
             onChange={(event) => setLanguage(event.target.value as typeof language)}
             className="hidden h-9 max-w-24 rounded-full border border-zinc-200 bg-white/85 px-2 text-xs font-medium text-zinc-700 outline-none transition hover:border-zinc-400 sm:block sm:max-w-none sm:px-3"
@@ -92,14 +85,14 @@ export function Navbar() {
         <div className="border-t border-zinc-200 bg-white/95 px-4 py-5 shadow-sm backdrop-blur-xl lg:hidden">
           <div className="mx-auto max-w-7xl">
             <div className="grid gap-1">
-              {mobileNavItems.map((item) => (
+              {navItems.map((item) => (
                 <a
                   key={item.href}
                   href={item.href}
                   onClick={() => setIsMenuOpen(false)}
                   className="flex min-h-12 items-center justify-between border-b border-zinc-100 text-base font-medium text-zinc-950"
                 >
-                  {item.label}
+                  {t.nav[item.labelKey]}
                   <span className="text-zinc-300">/</span>
                 </a>
               ))}
@@ -109,14 +102,14 @@ export function Navbar() {
               onClick={() => setIsMenuOpen(false)}
               className="mt-5 flex h-12 items-center justify-center bg-zinc-950 px-4 text-sm font-semibold text-white transition hover:bg-zinc-800"
             >
-              Purchase Allocation
+              {t.nav.purchaseAllocation}
             </a>
             <div className="mt-5">
               <label className="mb-2 block text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">
-                Language
+                {t.nav.language}
               </label>
               <select
-                aria-label="Language"
+                aria-label={t.nav.language}
                 value={language}
                 onChange={(event) => setLanguage(event.target.value as typeof language)}
                 className="h-12 w-full rounded-none border border-zinc-200 bg-white px-3 text-sm font-medium text-zinc-700 outline-none transition hover:border-zinc-400"
@@ -136,6 +129,7 @@ export function Navbar() {
 }
 
 function CompactConnectButton() {
+  const { t } = useLanguage();
   const { address, isConnected } = useAccount();
   const chainId = useChainId();
   const { openAccountModal } = useAccountModal();
@@ -150,7 +144,7 @@ function CompactConnectButton() {
         onClick={openConnectModal}
         className="h-9 rounded-full bg-zinc-950 px-3 text-xs font-semibold text-white transition hover:bg-zinc-800 sm:px-4"
       >
-        Connect
+        {t.dashboard.connectWallet}
       </button>
     );
   }
@@ -162,7 +156,7 @@ function CompactConnectButton() {
         onClick={openChainModal}
         className="h-9 rounded-full bg-red-600 px-3 text-xs font-semibold text-white"
       >
-        Network
+        {t.nav.network}
       </button>
     );
   }

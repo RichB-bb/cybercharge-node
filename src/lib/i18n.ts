@@ -9,12 +9,15 @@ type Translation = {
   languageName: string;
   nav: {
     dashboard: string;
+    infrastructure: string;
+    language: string;
+    network: string;
     nodes: string;
     whyEv: string;
     highlights: string;
     revenue: string;
-    network: string;
     payment: string;
+    purchaseAllocation: string;
   };
   hero: {
     title: string;
@@ -80,6 +83,12 @@ type Translation = {
     qrAmount: string;
     receiver: string;
     product: string;
+    paymentAmount: string;
+    paymentMethod: string;
+    tokenContract: string;
+    purchaseAllocation: string;
+    processingAllocation: string;
+    waitingConfirmation: string;
   };
   flow: {
     eyebrow: string;
@@ -88,13 +97,60 @@ type Translation = {
   };
   footer: {
     brand: string;
+    contact: string;
+    copyright: string;
     disclosure: string;
     mvp: string;
+    platform: string;
+    privacy: string;
+    riskDisclosure: string;
+    terms: string;
+  };
+  checkout: {
+    eyebrow: string;
+    title: string;
+    dashboardCta: string;
+    steps: string[];
   };
   dashboard: {
     title: string;
     subtitle: string;
+    rewardsTitle: string;
+    rewardsSubtitle: string;
     connectedWallet: string;
+    noWalletConnected: string;
+    connectWallet: string;
+    connectedWalletHelp: string;
+    disconnectedWalletHelp: string;
+    userRecordFound: string;
+    userSyncPending: string;
+    supabaseReady: string;
+    walletIdentityPending: string;
+    withdrawalWallet: string;
+    amount: string;
+    asset: string;
+    network: string;
+    submitting: string;
+    loadingRewards: string;
+    rewards: string;
+    withdrawableBalance: string;
+    yourAvailableRewards: string;
+    withdrawalDisclaimer: string;
+    requestWithdrawal: string;
+    withdrawToConnectedWallet: string;
+    rewardHistory: string;
+    withdrawalHistory: string;
+    noApprovedRewards: string;
+    noWithdrawalRequests: string;
+    notConnectedShort: string;
+    validationConnectWallet: string;
+    validationAmountPositive: string;
+    validationAmountExceeded: string;
+    loadRewardsError: string;
+    loadWithdrawalsError: string;
+    loadWithdrawalDataError: string;
+    submitWithdrawalError: string;
+    withdrawalSubmitted: string;
     notConnected: string;
     portfolio: string;
     totalAllocation: string;
@@ -124,16 +180,25 @@ export const languages: { code: Language; label: string }[] = [
   { code: "ar", label: "العربية" },
 ];
 
+const languageStorageKey = "cybercharge_language";
+
+function isLanguage(value: string | null): value is Language {
+  return Boolean(value && value in translations);
+}
+
 const en: Translation = {
   languageName: "English",
   nav: {
     dashboard: "Dashboard",
+    infrastructure: "Infrastructure",
+    language: "Language",
+    network: "Network",
     nodes: "Nodes",
     whyEv: "Why EV",
     highlights: "Highlights",
     revenue: "Revenue",
-    network: "Network",
     payment: "Payment",
+    purchaseAllocation: "Purchase Allocation",
   },
   hero: {
     title: "Invest in EV Charging Infrastructure",
@@ -270,6 +335,12 @@ const en: Translation = {
     qrAmount: "QR Amount",
     receiver: "Receiver Address",
     product: "Shared Infrastructure Allocation Unit",
+    paymentAmount: "Payment Amount",
+    paymentMethod: "Payment Method",
+    tokenContract: "Token Contract",
+    purchaseAllocation: "Purchase Allocation",
+    processingAllocation: "Processing Infrastructure Allocation...",
+    waitingConfirmation: "Waiting for Confirmation...",
   },
   flow: {
     eyebrow: "Investment Flow",
@@ -295,15 +366,62 @@ const en: Translation = {
   },
   footer: {
     brand: "CyberCharge Node",
+    contact: "Contact",
+    copyright: "© 2026 CyberCharge",
     disclosure:
       "This page is a front-end MVP. Revenue figures are illustrative and not financial guarantees. Always provide proper legal disclosures before accepting real investment funds.",
     mvp:
       "No backend, contract, order system, or automatic payment detection is included in this MVP. Projected utilization and deployment metrics are examples only.",
+    platform: "Infrastructure allocation platform for EV charging deployment.",
+    privacy: "Privacy",
+    riskDisclosure: "Risk Disclosure",
+    terms: "Terms",
+  },
+  checkout: {
+    eyebrow: "What Happens After Payment",
+    title: "From wallet to dashboard.",
+    dashboardCta: "View Investor Dashboard",
+    steps: ["Connect Wallet", "Purchase Allocation", "View Dashboard"],
   },
   dashboard: {
-    title: "Investor Dashboard",
-    subtitle: "Monitor infrastructure allocation, deployment exposure, and network activity.",
+    title: "Rewards Dashboard",
+    subtitle: "Your available rewards, withdrawal requests, and payout history.",
+    rewardsTitle: "Rewards",
+    rewardsSubtitle: "Your available rewards, withdrawal requests, and payout history.",
     connectedWallet: "Connected Wallet",
+    noWalletConnected: "No Wallet Connected",
+    connectWallet: "Connect Wallet",
+    connectedWalletHelp: "Withdrawals are sent to this connected wallet.",
+    disconnectedWalletHelp: "Connect Wallet to view rewards and request withdrawals.",
+    userRecordFound: "User record found",
+    userSyncPending: "User sync pending",
+    supabaseReady: "Supabase ready",
+    walletIdentityPending: "Wallet identity pending",
+    withdrawalWallet: "Withdrawal wallet",
+    amount: "Amount",
+    asset: "Asset",
+    network: "Network",
+    submitting: "Submitting...",
+    loadingRewards: "Loading reward records...",
+    rewards: "Rewards",
+    withdrawableBalance: "Withdrawable Balance",
+    yourAvailableRewards: "Your available rewards",
+    withdrawalDisclaimer: "Withdrawals are manually reviewed. Rewards are not guaranteed.",
+    requestWithdrawal: "Request Withdrawal",
+    withdrawToConnectedWallet: "Withdraw to your connected wallet",
+    rewardHistory: "Reward History",
+    withdrawalHistory: "Withdrawal History",
+    noApprovedRewards: "No approved rewards available.",
+    noWithdrawalRequests: "No withdrawal requests found.",
+    notConnectedShort: "Not connected",
+    validationConnectWallet: "Connect wallet before requesting a withdrawal.",
+    validationAmountPositive: "Withdrawal amount must be greater than 0.",
+    validationAmountExceeded: "Withdrawal amount exceeds your withdrawable balance.",
+    loadRewardsError: "Unable to load rewards.",
+    loadWithdrawalsError: "Unable to load withdrawals.",
+    loadWithdrawalDataError: "Unable to load withdrawal data.",
+    submitWithdrawalError: "Unable to submit withdrawal request.",
+    withdrawalSubmitted: "Withdrawal request submitted for manual review.",
     notConnected: "Connect a wallet to preview investor status.",
     portfolio: "Portfolio Overview",
     totalAllocation: "Total Infrastructure Allocation",
@@ -342,12 +460,15 @@ export const translations: Record<Language, Translation> = {
     languageName: "中文",
     nav: {
       dashboard: "仪表盘",
+      infrastructure: "基础设施",
+      language: "语言",
+      network: "网络",
       nodes: "节点",
       whyEv: "为何选择 EV",
       highlights: "亮点",
       revenue: "收益模型",
-      network: "网络",
       payment: "支付",
+      purchaseAllocation: "购买份额",
     },
     hero: {
       title: "投资电动汽车充电基础设施",
@@ -422,19 +543,79 @@ export const translations: Record<Language, Translation> = {
       asset: "支付资产",
       qrAmount: "二维码金额",
       receiver: "收款地址",
+      paymentAmount: "支付金额",
+      paymentMethod: "支付方式",
+      tokenContract: "代币合约",
+      purchaseAllocation: "购买份额",
+      processingAllocation: "正在处理基础设施份额...",
+      waitingConfirmation: "等待网络确认...",
     },
     footer: {
       brand: "CyberCharge Node",
+      contact: "联系",
+      copyright: "© 2026 CyberCharge",
       disclosure:
         "本页面为前端 MVP。收益数字仅为示例，不构成财务保证。接受真实投资资金前必须提供适当法律披露。",
       mvp:
         "本 MVP 不包含后端、合约、订单系统或自动到账检测。预估利用率和部署指标仅为示例。",
+      platform: "面向电动汽车充电部署的基础设施份额平台。",
+      privacy: "隐私政策",
+      riskDisclosure: "风险披露",
+      terms: "服务条款",
+    },
+    checkout: {
+      eyebrow: "付款后会发生什么",
+      title: "从钱包到用户后台。",
+      dashboardCta: "查看投资者后台",
+      steps: ["连接钱包", "购买份额", "查看后台"],
+    },
+    dashboard: {
+      ...en.dashboard,
+      title: "收益后台",
+      subtitle: "查看可提现奖励、提现申请和打款记录。",
+      rewardsTitle: "奖励",
+      rewardsSubtitle: "查看可提现奖励、提现申请和打款记录。",
+      connectedWallet: "已连接钱包",
+      noWalletConnected: "未连接钱包",
+      connectWallet: "连接钱包",
+      connectedWalletHelp: "提现将发放到当前连接的钱包。",
+      disconnectedWalletHelp: "连接钱包后查看奖励并提交提现申请。",
+      userRecordFound: "用户记录已同步",
+      userSyncPending: "用户同步待完成",
+      supabaseReady: "Supabase 已就绪",
+      walletIdentityPending: "等待钱包身份",
+      withdrawalWallet: "提现钱包",
+      amount: "金额",
+      asset: "资产",
+      network: "网络",
+      submitting: "提交中...",
+      loadingRewards: "正在加载奖励记录...",
+      rewards: "奖励",
+      withdrawableBalance: "可提现余额",
+      yourAvailableRewards: "您的可用奖励",
+      withdrawalDisclaimer: "提现由人工审核。奖励不构成保证。",
+      requestWithdrawal: "申请提现",
+      withdrawToConnectedWallet: "提现到当前连接钱包",
+      rewardHistory: "奖励记录",
+      withdrawalHistory: "提现记录",
+      noApprovedRewards: "暂无可提现奖励。",
+      noWithdrawalRequests: "暂无提现申请。",
+      notConnectedShort: "未连接",
+      validationConnectWallet: "请先连接钱包再申请提现。",
+      validationAmountPositive: "提现金额必须大于 0。",
+      validationAmountExceeded: "提现金额超过可提现余额。",
+      loadRewardsError: "无法加载奖励。",
+      loadWithdrawalsError: "无法加载提现记录。",
+      loadWithdrawalDataError: "无法加载提现数据。",
+      submitWithdrawalError: "无法提交提现申请。",
+      withdrawalSubmitted: "提现申请已提交，等待人工审核。",
+      notConnected: "连接钱包以查看奖励和提现记录。",
     },
   },
   ja: {
     ...en,
     languageName: "日本語",
-    nav: { dashboard: "ダッシュボード", nodes: "ノード", whyEv: "EVの理由", highlights: "特徴", revenue: "収益", network: "ネットワーク", payment: "支払い" },
+    nav: { ...en.nav, dashboard: "ダッシュボード", infrastructure: "インフラ", language: "言語", network: "ネットワーク", nodes: "ノード", whyEv: "EVの理由", highlights: "特徴", revenue: "収益", payment: "支払い", purchaseAllocation: "配分を購入" },
     hero: { title: "EV充電インフラへ投資", subtitle: "実世界の配備に裏付けられた収益参加型ノード。", invest: "投資する", deployment: "配備を見る" },
     immersive: { stationTitle: "実在する充電インフラ", stationSubtitle: "実際のロケーションに配備された物理EV充電ステーション。", assetsTitle: "収益参加型エネルギー資産", assetsSubtitle: "ノード保有者は配備済みステーションの充電サービス収益に参加します。" },
     revenue: { title: "収益参加の仕組み", subtitle: "収益は配備済みステーションでの実際のEV充電活動から生まれます。", steps: ["充電ステーションをオフライン拠点へ配備します。", "EVドライバーが充電セッションに支払います。", "プラットフォームが充電サービス収益を集計します。", "収益がノード保有者へ配分されます。"] },
@@ -444,12 +625,14 @@ export const translations: Record<Language, Translation> = {
     why: { eyebrow: "市場背景", title: "なぜEVインフラなのか", items: [{ title: "EV普及の拡大", description: "長期的なモビリティ需要は電動フリートと個人EVへ移行しています。" }, { title: "充電需要の増加", description: "車両数の増加により、地域で利用できる充電容量が必要になります。" }, { title: "オフライン展開性", description: "共有ステーションは駐車場、小売、地域拠点へ展開できます。" }, { title: "利用収益を生む設備", description: "充電インフラは実利用を通じてサービス収益を生みます。" }] },
     features: { eyebrow: "投資ハイライト", title: "配備済みエネルギーインフラを中心に構築。", items: [{ title: "実物充電資産", description: "オフラインに配備された物理EV充電ステーションに裏付けられます。" }, { title: "収益参加モデル", description: "ノード保有者は充電サービス収益の一部に参加します。" }, { title: "Web3決済アクセス", description: "ウォレットまたはQR決済で暗号資産による購入に対応します。" }, { title: "限定配備ラウンド", description: "初期ノードは最初の配備ステーション群に関連付けられます。" }] },
     flow: { eyebrow: "投資フロー", title: "ウォレット接続からノード配分まで。", steps: [{ title: "ウォレット接続", description: "対応するWeb3ウォレットで認証します。" }, { title: "配分を選択", description: "分割インフラ配分ユニットを選択します。" }, { title: "暗号資産で支払い", description: "ETH、USDT、USDCをウォレットまたはQRで送付します。" }, { title: "配分を受領", description: "選択したノードのMVP段階の配分情報を受け取ります。" }] },
-    footer: { brand: "CyberCharge Node", disclosure: "このページはフロントエンドMVPです。収益数値は例示であり、財務上の保証ではありません。実際の投資資金を受け入れる前に適切な法的開示を行ってください。", mvp: "このMVPにはバックエンド、契約、注文システム、自動入金検知は含まれません。推定稼働率と配備指標は例示です。" },
+    footer: { ...en.footer, brand: "CyberCharge Node", contact: "お問い合わせ", copyright: "© 2026 CyberCharge", disclosure: "このページはフロントエンドMVPです。収益数値は例示であり、財務上の保証ではありません。実際の投資資金を受け入れる前に適切な法的開示を行ってください。", mvp: "このMVPにはバックエンド、契約、注文システム、自動入金検知は含まれません。推定稼働率と配備指標は例示です。", platform: "EV充電配備のためのインフラ配分プラットフォーム。", privacy: "プライバシー", riskDisclosure: "リスク開示", terms: "利用規約" },
+    checkout: { eyebrow: "支払い後の流れ", title: "ウォレットからダッシュボードへ。", dashboardCta: "投資家ダッシュボードを見る", steps: ["ウォレット接続", "配分を購入", "ダッシュボードを見る"] },
+    dashboard: { ...en.dashboard, title: "報酬ダッシュボード", subtitle: "利用可能な報酬、出金申請、支払い履歴を確認します。", rewardsTitle: "報酬", rewardsSubtitle: "利用可能な報酬、出金申請、支払い履歴を確認します。", connectedWallet: "接続済みウォレット", connectWallet: "ウォレット接続", connectedWalletHelp: "出金はこの接続済みウォレットへ送られます。", disconnectedWalletHelp: "ウォレットを接続して報酬と出金申請を確認してください。", userRecordFound: "ユーザー記録を確認済み", userSyncPending: "ユーザー同期待ち", supabaseReady: "Supabase準備完了", walletIdentityPending: "ウォレット識別待ち", withdrawalWallet: "出金ウォレット", amount: "金額", asset: "資産", network: "ネットワーク", submitting: "送信中...", loadingRewards: "報酬記録を読み込み中...", rewards: "報酬", withdrawableBalance: "出金可能残高", yourAvailableRewards: "利用可能な報酬", withdrawalDisclaimer: "出金は手動審査されます。報酬は保証されません。", requestWithdrawal: "出金申請", withdrawToConnectedWallet: "接続済みウォレットへ出金", rewardHistory: "報酬履歴", withdrawalHistory: "出金履歴", noApprovedRewards: "出金可能な報酬はありません。", noWithdrawalRequests: "出金申請はありません。", notConnectedShort: "未接続", validationConnectWallet: "出金申請前にウォレットを接続してください。", validationAmountPositive: "出金額は0より大きい必要があります。", validationAmountExceeded: "出金額が出金可能残高を超えています。", loadRewardsError: "報酬を読み込めません。", loadWithdrawalsError: "出金を読み込めません。", loadWithdrawalDataError: "出金データを読み込めません。", submitWithdrawalError: "出金申請を送信できません。", withdrawalSubmitted: "出金申請を送信しました。手動審査待ちです。", notConnected: "ウォレットを接続して報酬と出金を確認してください。" },
   },
   ko: {
     ...en,
     languageName: "한국어",
-    nav: { dashboard: "대시보드", nodes: "노드", whyEv: "EV 인프라", highlights: "하이라이트", revenue: "수익", network: "네트워크", payment: "결제" },
+    nav: { ...en.nav, dashboard: "대시보드", infrastructure: "인프라", language: "언어", network: "네트워크", nodes: "노드", whyEv: "EV 인프라", highlights: "하이라이트", revenue: "수익", payment: "결제", purchaseAllocation: "배정 구매" },
     hero: { title: "EV 충전 인프라에 투자", subtitle: "실제 배포 기반의 수익 참여형 노드.", invest: "투자하기", deployment: "배포 보기" },
     immersive: { stationTitle: "실물 충전 인프라", stationSubtitle: "실제 장소에 배포되는 물리적 EV 충전소.", assetsTitle: "수익 참여형 에너지 자산", assetsSubtitle: "노드 보유자는 배포된 충전소의 서비스 수익에 참여합니다." },
     revenue: { title: "수익 참여 방식", subtitle: "수익은 배포된 충전소의 실제 EV 충전 활동에서 발생합니다.", steps: ["충전소가 오프라인 위치에 배포됩니다.", "EV 운전자가 충전 세션 비용을 지불합니다.", "플랫폼이 충전 서비스 수익을 집계합니다.", "수익이 노드 보유자에게 배분됩니다."] },
@@ -459,12 +642,14 @@ export const translations: Record<Language, Translation> = {
     why: { eyebrow: "시장 배경", title: "왜 EV 인프라인가", items: [{ title: "EV 보급 성장", description: "장기 모빌리티 수요는 전기 플릿과 개인 EV로 이동하고 있습니다." }, { title: "충전 수요 확대", description: "도로 위 차량 증가에는 접근 가능한 지역 충전 용량이 필요합니다." }, { title: "오프라인 확장성", description: "공유 스테이션은 주차장, 리테일, 커뮤니티 부지에 배포될 수 있습니다." }, { title: "서비스 수익형 유틸리티 자산", description: "충전 인프라는 실제 사용을 통해 서비스 수익을 만듭니다." }] },
     features: { eyebrow: "투자 하이라이트", title: "배포된 에너지 인프라를 중심으로 설계.", items: [{ title: "실물 충전 자산", description: "오프라인에 배포된 물리적 EV 충전소를 기반으로 합니다." }, { title: "수익 참여 모델", description: "노드 보유자는 충전 서비스 수익의 일부에 참여합니다." }, { title: "Web3 결제 접근", description: "지갑 또는 QR 결제로 암호화폐 구매를 지원합니다." }, { title: "제한 배포 라운드", description: "초기 노드는 첫 배포 스테이션 배치와 연결됩니다." }] },
     flow: { eyebrow: "투자 흐름", title: "지갑 연결부터 노드 배정까지.", steps: [{ title: "지갑 연결", description: "지원되는 Web3 지갑으로 인증합니다." }, { title: "배정 선택", description: "분할 인프라 배정 유닛을 선택합니다." }, { title: "암호화폐 결제", description: "ETH, USDT 또는 USDC를 지갑이나 QR로 전송합니다." }, { title: "배정 수령", description: "선택한 노드의 MVP 단계 배정 정보를 받습니다." }] },
-    footer: { brand: "CyberCharge Node", disclosure: "이 페이지는 프론트엔드 MVP입니다. 수익 수치는 예시이며 재무 보장이 아닙니다. 실제 투자금을 받기 전 적절한 법적 고지를 제공해야 합니다.", mvp: "이 MVP에는 백엔드, 계약, 주문 시스템 또는 자동 결제 감지가 포함되어 있지 않습니다. 예상 이용률과 배포 지표는 예시입니다." },
+    footer: { ...en.footer, brand: "CyberCharge Node", contact: "문의", copyright: "© 2026 CyberCharge", disclosure: "이 페이지는 프론트엔드 MVP입니다. 수익 수치는 예시이며 재무 보장이 아닙니다. 실제 투자금을 받기 전 적절한 법적 고지를 제공해야 합니다.", mvp: "이 MVP에는 백엔드, 계약, 주문 시스템 또는 자동 결제 감지가 포함되어 있지 않습니다. 예상 이용률과 배포 지표는 예시입니다.", platform: "EV 충전 배포를 위한 인프라 배정 플랫폼.", privacy: "개인정보", riskDisclosure: "위험 고지", terms: "이용약관" },
+    checkout: { eyebrow: "결제 후 진행", title: "지갑에서 대시보드까지.", dashboardCta: "투자자 대시보드 보기", steps: ["지갑 연결", "배정 구매", "대시보드 보기"] },
+    dashboard: { ...en.dashboard, title: "리워드 대시보드", subtitle: "사용 가능한 리워드, 출금 요청, 지급 내역을 확인합니다.", rewardsTitle: "리워드", rewardsSubtitle: "사용 가능한 리워드, 출금 요청, 지급 내역을 확인합니다.", connectedWallet: "연결된 지갑", connectWallet: "지갑 연결", connectedWalletHelp: "출금은 현재 연결된 지갑으로 전송됩니다.", disconnectedWalletHelp: "지갑을 연결해 리워드와 출금 요청을 확인하세요.", userRecordFound: "사용자 기록 확인됨", userSyncPending: "사용자 동기화 대기", supabaseReady: "Supabase 준비됨", walletIdentityPending: "지갑 신원 대기", withdrawalWallet: "출금 지갑", amount: "금액", asset: "자산", network: "네트워크", submitting: "제출 중...", loadingRewards: "리워드 기록 로딩 중...", rewards: "리워드", withdrawableBalance: "출금 가능 잔액", yourAvailableRewards: "사용 가능한 리워드", withdrawalDisclaimer: "출금은 수동 검토됩니다. 리워드는 보장되지 않습니다.", requestWithdrawal: "출금 요청", withdrawToConnectedWallet: "연결된 지갑으로 출금", rewardHistory: "리워드 내역", withdrawalHistory: "출금 내역", noApprovedRewards: "출금 가능한 리워드가 없습니다.", noWithdrawalRequests: "출금 요청이 없습니다.", notConnectedShort: "연결 안 됨", validationConnectWallet: "출금 요청 전에 지갑을 연결하세요.", validationAmountPositive: "출금 금액은 0보다 커야 합니다.", validationAmountExceeded: "출금 금액이 출금 가능 잔액을 초과합니다.", loadRewardsError: "리워드를 불러올 수 없습니다.", loadWithdrawalsError: "출금 내역을 불러올 수 없습니다.", loadWithdrawalDataError: "출금 데이터를 불러올 수 없습니다.", submitWithdrawalError: "출금 요청을 제출할 수 없습니다.", withdrawalSubmitted: "출금 요청이 제출되어 수동 검토 대기 중입니다.", notConnected: "지갑을 연결해 리워드와 출금 내역을 확인하세요." },
   },
   es: {
     ...en,
     languageName: "Español",
-    nav: { dashboard: "Panel", nodes: "Nodos", whyEv: "Por qué EV", highlights: "Aspectos", revenue: "Ingresos", network: "Red", payment: "Pago" },
+    nav: { ...en.nav, dashboard: "Panel", infrastructure: "Infraestructura", language: "Idioma", network: "Red", nodes: "Nodos", whyEv: "Por qué EV", highlights: "Aspectos", revenue: "Ingresos", payment: "Pago", purchaseAllocation: "Comprar asignación" },
     hero: { title: "Invierte en infraestructura de carga EV", subtitle: "Nodos de participación en ingresos respaldados por despliegues reales.", invest: "Invertir ahora", deployment: "Ver despliegue" },
     immersive: { stationTitle: "Infraestructura de carga real", stationSubtitle: "Estaciones físicas de carga EV desplegadas en ubicaciones reales.", assetsTitle: "Activos energéticos con participación", assetsSubtitle: "Los titulares de nodos participan en ingresos de servicios de carga generados por estaciones desplegadas." },
     revenue: { title: "Cómo funciona la participación", subtitle: "Los ingresos se generan por actividad real de carga EV en estaciones desplegadas.", steps: ["Las estaciones se despliegan en ubicaciones físicas.", "Los conductores EV pagan por sesiones de carga.", "La plataforma recauda ingresos de servicio.", "Los ingresos se asignan a titulares de nodos."] },
@@ -474,12 +659,14 @@ export const translations: Record<Language, Translation> = {
     why: { eyebrow: "Contexto de mercado", title: "Por qué infraestructura EV", items: [{ title: "Crecimiento de adopción EV", description: "La demanda de movilidad se desplaza hacia flotas eléctricas y EV privados." }, { title: "Expansión de demanda de carga", description: "Más vehículos requieren capacidad de carga local accesible." }, { title: "Escalabilidad física", description: "Las estaciones compartidas pueden desplegarse en aparcamientos, retail y comunidades." }, { title: "Activos de utilidad con ingresos", description: "La infraestructura de carga crea ingresos de servicio por uso real." }] },
     features: { eyebrow: "Aspectos de inversión", title: "Construido sobre infraestructura energética desplegada.", items: [{ title: "Activos de carga reales", description: "Respaldados por estaciones físicas de carga EV desplegadas offline." }, { title: "Modelo de participación", description: "Los titulares de nodos participan en ingresos de servicios de carga." }, { title: "Acceso de pago Web3", description: "Compra nodos con crypto mediante billetera o pago QR." }, { title: "Ronda limitada", description: "Los primeros nodos se vinculan al primer lote de estaciones desplegadas." }] },
     flow: { eyebrow: "Flujo de inversión", title: "De conectar la billetera a recibir asignación.", steps: [{ title: "Conectar billetera", description: "Autentícate con una billetera Web3 compatible." }, { title: "Seleccionar asignación", description: "Elige una unidad fraccionaria de infraestructura." }, { title: "Pagar con crypto", description: "Envía ETH, USDT o USDC por billetera o QR." }, { title: "Recibir asignación", description: "Recibe detalles MVP de la asignación seleccionada." }] },
-    footer: { brand: "CyberCharge Node", disclosure: "Esta página es un MVP front-end. Las cifras de ingresos son ilustrativas y no son garantías financieras. Deben existir divulgaciones legales adecuadas antes de aceptar fondos reales.", mvp: "Este MVP no incluye backend, contrato, sistema de pedidos ni detección automática de pagos. Las métricas proyectadas son solo ejemplos." },
+    footer: { ...en.footer, brand: "CyberCharge Node", contact: "Contacto", copyright: "© 2026 CyberCharge", disclosure: "Esta página es un MVP front-end. Las cifras de ingresos son ilustrativas y no son garantías financieras. Deben existir divulgaciones legales adecuadas antes de aceptar fondos reales.", mvp: "Este MVP no incluye backend, contrato, sistema de pedidos ni detección automática de pagos. Las métricas proyectadas son solo ejemplos.", platform: "Plataforma de asignación de infraestructura para despliegue de carga EV.", privacy: "Privacidad", riskDisclosure: "Riesgos", terms: "Términos" },
+    checkout: { eyebrow: "Qué ocurre después del pago", title: "De la billetera al panel.", dashboardCta: "Ver panel de inversor", steps: ["Conectar billetera", "Comprar asignación", "Ver panel"] },
+    dashboard: { ...en.dashboard, title: "Panel de recompensas", subtitle: "Consulta recompensas disponibles, solicitudes de retiro e historial de pagos.", rewardsTitle: "Recompensas", rewardsSubtitle: "Consulta recompensas disponibles, solicitudes de retiro e historial de pagos.", connectedWallet: "Billetera conectada", connectWallet: "Conectar billetera", connectedWalletHelp: "Los retiros se envían a esta billetera conectada.", disconnectedWalletHelp: "Conecta una billetera para ver recompensas y solicitar retiros.", userRecordFound: "Registro de usuario encontrado", userSyncPending: "Sincronización pendiente", supabaseReady: "Supabase listo", walletIdentityPending: "Identidad de billetera pendiente", withdrawalWallet: "Billetera de retiro", amount: "Importe", asset: "Activo", network: "Red", submitting: "Enviando...", loadingRewards: "Cargando registros de recompensas...", rewards: "Recompensas", withdrawableBalance: "Saldo retirable", yourAvailableRewards: "Tus recompensas disponibles", withdrawalDisclaimer: "Los retiros se revisan manualmente. Las recompensas no están garantizadas.", requestWithdrawal: "Solicitar retiro", withdrawToConnectedWallet: "Retirar a tu billetera conectada", rewardHistory: "Historial de recompensas", withdrawalHistory: "Historial de retiros", noApprovedRewards: "No hay recompensas disponibles.", noWithdrawalRequests: "No hay solicitudes de retiro.", notConnectedShort: "No conectada", validationConnectWallet: "Conecta una billetera antes de solicitar un retiro.", validationAmountPositive: "El importe debe ser mayor que 0.", validationAmountExceeded: "El importe supera tu saldo retirable.", loadRewardsError: "No se pudieron cargar las recompensas.", loadWithdrawalsError: "No se pudieron cargar los retiros.", loadWithdrawalDataError: "No se pudieron cargar los datos de retiro.", submitWithdrawalError: "No se pudo enviar la solicitud de retiro.", withdrawalSubmitted: "Solicitud de retiro enviada para revisión manual.", notConnected: "Conecta una billetera para ver recompensas y retiros." },
   },
   fr: {
     ...en,
     languageName: "Français",
-    nav: { dashboard: "Tableau", nodes: "Nœuds", whyEv: "Pourquoi EV", highlights: "Points clés", revenue: "Revenus", network: "Réseau", payment: "Paiement" },
+    nav: { ...en.nav, dashboard: "Tableau", infrastructure: "Infrastructure", language: "Langue", network: "Réseau", nodes: "Nœuds", whyEv: "Pourquoi EV", highlights: "Points clés", revenue: "Revenus", payment: "Paiement", purchaseAllocation: "Acheter une allocation" },
     hero: { title: "Investir dans l’infrastructure de recharge EV", subtitle: "Des nœuds de participation aux revenus adossés à des déploiements réels.", invest: "Investir", deployment: "Voir le déploiement" },
     immersive: { stationTitle: "Infrastructure de recharge réelle", stationSubtitle: "Stations physiques de recharge EV déployées sur des sites réels.", assetsTitle: "Actifs énergétiques à participation", assetsSubtitle: "Les détenteurs de nœuds participent aux revenus de recharge générés par les stations déployées." },
     revenue: { title: "Fonctionnement de la participation", subtitle: "Les revenus proviennent de l’activité réelle de recharge EV sur les stations déployées.", steps: ["Les stations sont déployées sur des sites physiques.", "Les conducteurs EV paient leurs sessions de recharge.", "La plateforme collecte les revenus de service.", "Les revenus sont alloués aux détenteurs de nœuds."] },
@@ -489,12 +676,14 @@ export const translations: Record<Language, Translation> = {
     why: { eyebrow: "Contexte marché", title: "Pourquoi l’infrastructure EV", items: [{ title: "Croissance de l’adoption EV", description: "La demande de mobilité évolue vers les flottes électriques et les EV privés." }, { title: "Expansion de la demande", description: "Plus de véhicules exigent davantage de capacité de recharge locale." }, { title: "Scalabilité hors ligne", description: "Les stations partagées peuvent être déployées dans parkings, commerces et sites communautaires." }, { title: "Actifs utiles générateurs de revenus", description: "L’infrastructure de recharge crée des revenus de service par usage réel." }] },
     features: { eyebrow: "Points clés d’investissement", title: "Construit autour d’une infrastructure énergétique déployée.", items: [{ title: "Actifs de recharge réels", description: "Adossés à des stations physiques de recharge EV déployées hors ligne." }, { title: "Modèle de participation", description: "Les détenteurs de nœuds participent aux revenus des services de recharge." }, { title: "Accès paiement Web3", description: "Achetez des nœuds avec crypto via portefeuille ou paiement QR." }, { title: "Tour de déploiement limité", description: "Les premiers nœuds sont liés au premier lot de stations déployées." }] },
     flow: { eyebrow: "Parcours d’investissement", title: "De la connexion du portefeuille à l’allocation.", steps: [{ title: "Connecter le portefeuille", description: "Authentifiez-vous avec un portefeuille Web3 compatible." }, { title: "Choisir l’allocation", description: "Sélectionnez une unité fractionnée d’infrastructure." }, { title: "Payer en crypto", description: "Envoyez ETH, USDT ou USDC via portefeuille ou QR." }, { title: "Recevoir l’allocation", description: "Recevez les détails MVP de l’allocation sélectionnée." }] },
-    footer: { brand: "CyberCharge Node", disclosure: "Cette page est un MVP front-end. Les chiffres de revenus sont illustratifs et ne constituent pas des garanties financières. Des informations légales appropriées sont nécessaires avant d’accepter des fonds réels.", mvp: "Ce MVP n’inclut ni backend, ni contrat, ni système de commande, ni détection automatique des paiements. Les métriques projetées sont des exemples." },
+    footer: { ...en.footer, brand: "CyberCharge Node", contact: "Contact", copyright: "© 2026 CyberCharge", disclosure: "Cette page est un MVP front-end. Les chiffres de revenus sont illustratifs et ne constituent pas des garanties financières. Des informations légales appropriées sont nécessaires avant d’accepter des fonds réels.", mvp: "Ce MVP n’inclut ni backend, ni contrat, ni système de commande, ni détection automatique des paiements. Les métriques projetées sont des exemples.", platform: "Plateforme d’allocation d’infrastructure pour le déploiement de recharge EV.", privacy: "Confidentialité", riskDisclosure: "Risques", terms: "Conditions" },
+    checkout: { eyebrow: "Après le paiement", title: "Du portefeuille au tableau.", dashboardCta: "Voir le tableau investisseur", steps: ["Connecter le portefeuille", "Acheter l’allocation", "Voir le tableau"] },
+    dashboard: { ...en.dashboard, title: "Tableau des récompenses", subtitle: "Consultez vos récompenses disponibles, demandes de retrait et historique de paiement.", rewardsTitle: "Récompenses", rewardsSubtitle: "Consultez vos récompenses disponibles, demandes de retrait et historique de paiement.", connectedWallet: "Portefeuille connecté", connectWallet: "Connecter", connectedWalletHelp: "Les retraits sont envoyés à ce portefeuille connecté.", disconnectedWalletHelp: "Connectez un portefeuille pour voir les récompenses et demander un retrait.", userRecordFound: "Utilisateur trouvé", userSyncPending: "Synchronisation en attente", supabaseReady: "Supabase prêt", walletIdentityPending: "Identité portefeuille en attente", withdrawalWallet: "Portefeuille de retrait", amount: "Montant", asset: "Actif", network: "Réseau", submitting: "Envoi...", loadingRewards: "Chargement des récompenses...", rewards: "Récompenses", withdrawableBalance: "Solde retirable", yourAvailableRewards: "Vos récompenses disponibles", withdrawalDisclaimer: "Les retraits sont examinés manuellement. Les récompenses ne sont pas garanties.", requestWithdrawal: "Demander un retrait", withdrawToConnectedWallet: "Retirer vers le portefeuille connecté", rewardHistory: "Historique des récompenses", withdrawalHistory: "Historique des retraits", noApprovedRewards: "Aucune récompense disponible.", noWithdrawalRequests: "Aucune demande de retrait.", notConnectedShort: "Non connecté", validationConnectWallet: "Connectez un portefeuille avant de demander un retrait.", validationAmountPositive: "Le montant doit être supérieur à 0.", validationAmountExceeded: "Le montant dépasse le solde retirable.", loadRewardsError: "Impossible de charger les récompenses.", loadWithdrawalsError: "Impossible de charger les retraits.", loadWithdrawalDataError: "Impossible de charger les données de retrait.", submitWithdrawalError: "Impossible d’envoyer la demande de retrait.", withdrawalSubmitted: "Demande de retrait envoyée pour examen manuel.", notConnected: "Connectez un portefeuille pour voir les récompenses et retraits." },
   },
   ar: {
     ...en,
     languageName: "العربية",
-    nav: { dashboard: "لوحة التحكم", nodes: "العقد", whyEv: "لماذا EV", highlights: "المزايا", revenue: "الإيرادات", network: "الشبكة", payment: "الدفع" },
+    nav: { ...en.nav, dashboard: "لوحة التحكم", infrastructure: "البنية", language: "اللغة", network: "الشبكة", nodes: "العقد", whyEv: "لماذا EV", highlights: "المزايا", revenue: "الإيرادات", payment: "الدفع", purchaseAllocation: "شراء التخصيص" },
     hero: { title: "استثمر في بنية شحن المركبات الكهربائية", subtitle: "عقد مشاركة في الإيرادات مدعومة بعمليات نشر واقعية.", invest: "استثمر الآن", deployment: "عرض النشر" },
     immersive: { stationTitle: "بنية شحن حقيقية", stationSubtitle: "محطات شحن فعلية للمركبات الكهربائية في مواقع واقعية.", assetsTitle: "أصول طاقة بمشاركة إيرادات", assetsSubtitle: "يشارك حاملو العقد في إيرادات خدمات الشحن الناتجة عن المحطات المنشورة." },
     revenue: { title: "كيف تعمل مشاركة الإيرادات", subtitle: "تنتج الإيرادات من نشاط شحن حقيقي عبر المحطات المنشورة.", steps: ["يتم نشر محطات الشحن في مواقع فعلية.", "يدفع سائقو المركبات الكهربائية مقابل جلسات الشحن.", "تجمع المنصة إيرادات خدمة الشحن.", "تخصص الإيرادات لحاملي العقد."] },
@@ -504,7 +693,9 @@ export const translations: Record<Language, Translation> = {
     why: { eyebrow: "سياق السوق", title: "لماذا بنية EV", items: [{ title: "نمو اعتماد EV", description: "يتحول طلب التنقل طويل الأجل نحو الأساطيل الكهربائية والمركبات الخاصة." }, { title: "توسع طلب الشحن", description: "تحتاج المركبات الإضافية إلى سعة شحن محلية يسهل الوصول إليها." }, { title: "قابلية التوسع الميداني", description: "يمكن نشر المحطات المشتركة في المواقف والتجزئة والمواقع المجتمعية." }, { title: "أصول خدمية مولدة للإيرادات", description: "تنشئ بنية الشحن إيرادات خدمة من الاستخدام الواقعي." }] },
     features: { eyebrow: "أبرز نقاط الاستثمار", title: "مبني حول بنية طاقة منشورة.", items: [{ title: "أصول شحن واقعية", description: "مدعومة بمحطات شحن EV فعلية منشورة ميدانيا." }, { title: "نموذج مشاركة الإيرادات", description: "يشارك حاملو العقد في جزء من إيرادات خدمة الشحن." }, { title: "وصول دفع Web3", description: "شراء العقد بالعملات الرقمية عبر المحفظة أو QR." }, { title: "جولة نشر محدودة", description: "ترتبط العقد المبكرة بأول دفعة من المحطات المنشورة." }] },
     flow: { eyebrow: "مسار الاستثمار", title: "من اتصال المحفظة إلى تخصيص العقدة.", steps: [{ title: "اتصال المحفظة", description: "المصادقة بمحفظة Web3 مدعومة." }, { title: "اختيار التخصيص", description: "اختر وحدة تخصيص بنية جزئية." }, { title: "الدفع بالعملات الرقمية", description: "أرسل ETH أو USDT أو USDC عبر المحفظة أو QR." }, { title: "استلام التخصيص", description: "استلم تفاصيل تخصيص مرحلة MVP للعقدة المحددة." }] },
-    footer: { brand: "CyberCharge Node", disclosure: "هذه الصفحة نموذج MVP للواجهة الأمامية. أرقام الإيرادات توضيحية وليست ضمانات مالية. يجب تقديم إفصاحات قانونية مناسبة قبل قبول أموال استثمار حقيقية.", mvp: "لا يتضمن هذا النموذج خلفية أو عقدا أو نظام طلبات أو كشف دفع تلقائي. مقاييس الاستخدام والنشر المتوقعة أمثلة فقط." },
+    footer: { ...en.footer, brand: "CyberCharge Node", contact: "اتصال", copyright: "© 2026 CyberCharge", disclosure: "هذه الصفحة نموذج MVP للواجهة الأمامية. أرقام الإيرادات توضيحية وليست ضمانات مالية. يجب تقديم إفصاحات قانونية مناسبة قبل قبول أموال استثمار حقيقية.", mvp: "لا يتضمن هذا النموذج خلفية أو عقدا أو نظام طلبات أو كشف دفع تلقائي. مقاييس الاستخدام والنشر المتوقعة أمثلة فقط.", platform: "منصة تخصيص بنية تحتية لنشر شحن المركبات الكهربائية.", privacy: "الخصوصية", riskDisclosure: "إفصاح المخاطر", terms: "الشروط" },
+    checkout: { eyebrow: "ماذا يحدث بعد الدفع", title: "من المحفظة إلى لوحة التحكم.", dashboardCta: "عرض لوحة المستثمر", steps: ["اتصال المحفظة", "شراء التخصيص", "عرض اللوحة"] },
+    dashboard: { ...en.dashboard, title: "لوحة المكافآت", subtitle: "تابع المكافآت المتاحة وطلبات السحب وسجل الدفعات.", rewardsTitle: "المكافآت", rewardsSubtitle: "تابع المكافآت المتاحة وطلبات السحب وسجل الدفعات.", connectedWallet: "المحفظة المتصلة", connectWallet: "اتصال المحفظة", connectedWalletHelp: "ترسل السحوبات إلى هذه المحفظة المتصلة.", disconnectedWalletHelp: "صل المحفظة لعرض المكافآت وطلب السحب.", userRecordFound: "تم العثور على سجل المستخدم", userSyncPending: "مزامنة المستخدم معلقة", supabaseReady: "Supabase جاهز", walletIdentityPending: "هوية المحفظة معلقة", withdrawalWallet: "محفظة السحب", amount: "المبلغ", asset: "الأصل", network: "الشبكة", submitting: "جار الإرسال...", loadingRewards: "جار تحميل سجلات المكافآت...", rewards: "المكافآت", withdrawableBalance: "الرصيد القابل للسحب", yourAvailableRewards: "مكافآتك المتاحة", withdrawalDisclaimer: "تتم مراجعة السحوبات يدويا. المكافآت غير مضمونة.", requestWithdrawal: "طلب سحب", withdrawToConnectedWallet: "السحب إلى المحفظة المتصلة", rewardHistory: "سجل المكافآت", withdrawalHistory: "سجل السحوبات", noApprovedRewards: "لا توجد مكافآت قابلة للسحب.", noWithdrawalRequests: "لا توجد طلبات سحب.", notConnectedShort: "غير متصل", validationConnectWallet: "صل المحفظة قبل طلب السحب.", validationAmountPositive: "يجب أن يكون مبلغ السحب أكبر من 0.", validationAmountExceeded: "مبلغ السحب يتجاوز الرصيد القابل للسحب.", loadRewardsError: "تعذر تحميل المكافآت.", loadWithdrawalsError: "تعذر تحميل السحوبات.", loadWithdrawalDataError: "تعذر تحميل بيانات السحب.", submitWithdrawalError: "تعذر إرسال طلب السحب.", withdrawalSubmitted: "تم إرسال طلب السحب للمراجعة اليدوية.", notConnected: "صل المحفظة لعرض المكافآت والسحوبات." },
   },
 };
 
@@ -522,9 +713,29 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   const dir: "ltr" | "rtl" = language === "ar" ? "rtl" : "ltr";
 
   useEffect(() => {
+    const storedLanguage = window.localStorage.getItem(languageStorageKey);
+
+    if (isLanguage(storedLanguage)) {
+      setLanguage(storedLanguage);
+    }
+  }, []);
+
+  useEffect(() => {
     document.documentElement.lang = language;
     document.documentElement.dir = dir;
+    window.localStorage.setItem(languageStorageKey, language);
   }, [dir, language]);
+
+  useEffect(() => {
+    function handleStorage(event: StorageEvent) {
+      if (event.key === languageStorageKey && isLanguage(event.newValue)) {
+        setLanguage(event.newValue);
+      }
+    }
+
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
+  }, []);
 
   const value = useMemo(
     () => ({ language, setLanguage, t: translations[language], dir }),

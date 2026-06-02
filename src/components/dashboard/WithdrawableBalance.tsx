@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { CircleDollarSign } from "lucide-react";
 import { useAccount } from "wagmi";
+import { useLanguage } from "@/lib/i18n";
 import type { RewardRecord, WithdrawalRequestRecord } from "@/lib/supabase";
 
 type Balance = {
@@ -15,6 +16,7 @@ const networks = ["Ethereum", "Base", "Polygon", "BSC"] as const;
 
 export function WithdrawableBalance() {
   const { address, isConnected } = useAccount();
+  const { language, t } = useLanguage();
   const [balances, setBalances] = useState<Balance[]>([]);
   const [rewards, setRewards] = useState<RewardRecord[]>([]);
   const [withdrawals, setWithdrawals] = useState<WithdrawalRequestRecord[]>([]);
@@ -50,11 +52,11 @@ export function WithdrawableBalance() {
       };
 
       if (!rewardsResponse.ok) {
-        throw new Error(rewardsData.error ?? "Unable to load rewards.");
+        throw new Error(rewardsData.error ?? t.dashboard.loadRewardsError);
       }
 
       if (!withdrawalsResponse.ok) {
-        throw new Error(withdrawalsData.error ?? "Unable to load withdrawals.");
+        throw new Error(withdrawalsData.error ?? t.dashboard.loadWithdrawalsError);
       }
 
       setBalances(rewardsData.balances ?? []);
@@ -64,7 +66,7 @@ export function WithdrawableBalance() {
       setBalances([]);
       setRewards([]);
       setWithdrawals([]);
-      setMessage(error instanceof Error ? error.message : "Unable to load withdrawal data.");
+      setMessage(error instanceof Error ? error.message : t.dashboard.loadWithdrawalDataError);
     } finally {
       setIsLoading(false);
     }
@@ -95,26 +97,28 @@ export function WithdrawableBalance() {
   }, [balances, selectedAsset, withdrawals]);
 
   const approvedRewards = rewards.filter((reward) => reward.status === "approved");
-  const displayAddress = address ? `${address.slice(0, 6)}...${address.slice(-4)}` : "Not connected";
+  const displayAddress = address
+    ? `${address.slice(0, 6)}...${address.slice(-4)}`
+    : t.dashboard.notConnectedShort;
 
   async function submitWithdrawal(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setMessage("");
 
     if (!isConnected || !address) {
-      setMessage("Connect wallet before requesting a withdrawal.");
+      setMessage(t.dashboard.validationConnectWallet);
       return;
     }
 
     const numericAmount = Number(amount);
 
     if (!Number.isFinite(numericAmount) || numericAmount <= 0) {
-      setMessage("Withdrawal amount must be greater than 0.");
+      setMessage(t.dashboard.validationAmountPositive);
       return;
     }
 
     if (numericAmount > selectedBalance) {
-      setMessage("Withdrawal amount exceeds your withdrawable balance.");
+      setMessage(t.dashboard.validationAmountExceeded);
       return;
     }
 
@@ -136,14 +140,14 @@ export function WithdrawableBalance() {
       const data = (await response.json()) as { error?: string };
 
       if (!response.ok) {
-        throw new Error(data.error ?? "Unable to submit withdrawal request.");
+        throw new Error(data.error ?? t.dashboard.submitWithdrawalError);
       }
 
       setAmount("");
-      setMessage("Withdrawal request submitted for manual review.");
+      setMessage(t.dashboard.withdrawalSubmitted);
       await loadWithdrawalData(address);
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Unable to submit withdrawal request.");
+      setMessage(error instanceof Error ? error.message : t.dashboard.submitWithdrawalError);
     } finally {
       setIsSubmitting(false);
     }
@@ -156,16 +160,18 @@ export function WithdrawableBalance() {
           <div className="flex items-start justify-between gap-6">
             <div>
               <p className="text-sm font-medium uppercase tracking-[0.18em] text-red-600">
-                Rewards
+                {t.dashboard.rewards}
               </p>
               <h2 className="mt-2 text-3xl font-semibold tracking-tight text-zinc-950 sm:text-4xl">
-                Withdrawable Balance
+                {t.dashboard.withdrawableBalance}
               </h2>
             </div>
             <CircleDollarSign size={24} className="shrink-0 text-red-600" />
           </div>
 
-          <p className="mt-4 text-sm leading-6 text-zinc-500">Your available rewards</p>
+          <p className="mt-4 text-sm leading-6 text-zinc-500">
+            {t.dashboard.yourAvailableRewards}
+          </p>
 
           <div className="mt-5 grid grid-cols-3 gap-2 sm:gap-3">
             {assets.map((asset) => {
@@ -182,7 +188,9 @@ export function WithdrawableBalance() {
                       : "border-zinc-200 bg-white text-zinc-950 hover:border-zinc-400"
                   }`}
                 >
-                  <p className="text-xl font-semibold tracking-tight sm:text-2xl">{formatAmount(value)}</p>
+                  <p className="text-xl font-semibold tracking-tight sm:text-2xl">
+                    {formatAmount(value, language)}
+                  </p>
                   <p className="mt-1 text-sm opacity-70">{asset}</p>
                 </button>
               );
@@ -190,26 +198,26 @@ export function WithdrawableBalance() {
           </div>
 
           <p className="mt-5 text-sm leading-6 text-zinc-500">
-            Withdrawals are manually reviewed. Rewards are not guaranteed.
+            {t.dashboard.withdrawalDisclaimer}
           </p>
         </div>
 
         <form onSubmit={submitWithdrawal} className="border-t border-zinc-200 pt-6 lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0">
           <h3 className="text-2xl font-semibold tracking-tight text-zinc-950">
-            Request Withdrawal
+            {t.dashboard.requestWithdrawal}
           </h3>
           <p className="mt-2 text-sm leading-6 text-zinc-500">
-            Withdraw to your connected wallet
+            {t.dashboard.withdrawToConnectedWallet}
           </p>
           <div className="mt-4 border-y border-zinc-200 py-4">
-            <p className="text-sm font-medium text-zinc-500">Withdrawal wallet</p>
+            <p className="text-sm font-medium text-zinc-500">{t.dashboard.withdrawalWallet}</p>
             <p className="mt-2 break-all font-mono text-lg font-semibold text-zinc-950">
               {isConnected ? address : displayAddress}
             </p>
           </div>
           <div className="mt-5 grid gap-4 sm:grid-cols-3">
             <label className="block sm:col-span-1">
-              <span className="text-sm font-medium text-zinc-500">Amount</span>
+              <span className="text-sm font-medium text-zinc-500">{t.dashboard.amount}</span>
               <input
                 value={amount}
                 onChange={(event) => setAmount(event.target.value)}
@@ -220,7 +228,7 @@ export function WithdrawableBalance() {
               />
             </label>
             <label className="block">
-              <span className="text-sm font-medium text-zinc-500">Asset</span>
+              <span className="text-sm font-medium text-zinc-500">{t.dashboard.asset}</span>
               <select
                 value={selectedAsset}
                 onChange={(event) => setSelectedAsset(event.target.value as (typeof assets)[number])}
@@ -234,7 +242,7 @@ export function WithdrawableBalance() {
               </select>
             </label>
             <label className="block">
-              <span className="text-sm font-medium text-zinc-500">Network</span>
+              <span className="text-sm font-medium text-zinc-500">{t.dashboard.network}</span>
               <select
                 value={selectedNetwork}
                 onChange={(event) =>
@@ -255,35 +263,35 @@ export function WithdrawableBalance() {
             disabled={!isConnected || isSubmitting || selectedBalance <= 0}
             className="mt-5 h-12 w-full bg-zinc-950 px-4 text-sm font-semibold text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:bg-zinc-400"
           >
-            {isSubmitting ? "Submitting..." : "Request Withdrawal"}
+            {isSubmitting ? t.dashboard.submitting : t.dashboard.requestWithdrawal}
           </button>
           {message && <p className="mt-4 text-sm leading-6 text-zinc-500">{message}</p>}
-          {isLoading && <p className="mt-4 text-sm text-zinc-500">Loading reward records...</p>}
+          {isLoading && <p className="mt-4 text-sm text-zinc-500">{t.dashboard.loadingRewards}</p>}
         </form>
       </div>
 
       <div className="mt-8 grid gap-5 lg:grid-cols-2">
         <RecordList
-          empty="No approved rewards available."
+          empty={t.dashboard.noApprovedRewards}
           rows={approvedRewards.map((reward) => ({
             id: reward.id,
             left: `${reward.amount} ${reward.asset}`,
-            right: translateRewardType(reward.reward_type),
-            sub: reward.created_at ? formatDate(reward.created_at) : "-",
+            right: translateRewardType(reward.reward_type, language),
+            sub: reward.created_at ? formatDate(reward.created_at, language) : "-",
           }))}
-          title="Reward History"
+          title={t.dashboard.rewardHistory}
         />
         <RecordList
-          empty="No withdrawal requests found."
+          empty={t.dashboard.noWithdrawalRequests}
           rows={withdrawals.map((withdrawal) => ({
             id: withdrawal.id,
             left: `${withdrawal.amount} ${withdrawal.asset}`,
-            right: translateStatus(withdrawal.status),
+            right: translateStatus(withdrawal.status, language),
             sub: withdrawal.payout_tx_hash
               ? `${shorten(withdrawal.payout_tx_hash)} · ${withdrawal.network}`
-              : `${withdrawal.network} · ${formatDate(withdrawal.created_at)}`,
+              : `${withdrawal.network} · ${formatDate(withdrawal.created_at, language)}`,
           }))}
-          title="Withdrawal History"
+          title={t.dashboard.withdrawalHistory}
         />
       </div>
     </section>
@@ -318,16 +326,16 @@ function RecordList({
   );
 }
 
-function formatAmount(value: number) {
-  return new Intl.NumberFormat("en-US", {
+function formatAmount(value: number, language = "en") {
+  return new Intl.NumberFormat(getIntlLocale(language), {
     maximumFractionDigits: 6,
     minimumFractionDigits: 0,
   }).format(value);
 }
 
-function formatDate(value?: string | null) {
+function formatDate(value?: string | null, language = "en") {
   if (!value) return "-";
-  return new Intl.DateTimeFormat("en-US", {
+  return new Intl.DateTimeFormat(getIntlLocale(language), {
     month: "short",
     day: "numeric",
     hour: "2-digit",
@@ -340,23 +348,52 @@ function shorten(value?: string | null) {
   return `${value.slice(0, 8)}...${value.slice(-6)}`;
 }
 
-function translateRewardType(type: string) {
-  const labels: Record<string, string> = {
-    referral: "Referral",
-    revenue_share: "Revenue Share",
-    manual_bonus: "Manual Bonus",
+function translateRewardType(type: string, language: string) {
+  const labels: Record<string, Record<string, string>> = {
+    zh: {
+      referral: "推荐奖励",
+      revenue_share: "收益分配",
+      manual_bonus: "手动奖励",
+    },
+    en: {
+      referral: "Referral",
+      revenue_share: "Revenue Share",
+      manual_bonus: "Manual Bonus",
+    },
   };
 
-  return labels[type] ?? type;
+  return (labels[language] ?? labels.en)[type] ?? type;
 }
 
-function translateStatus(status: string) {
-  const labels: Record<string, string> = {
-    approved: "Approved",
-    paid: "Paid",
-    pending: "Pending",
-    rejected: "Rejected",
+function translateStatus(status: string, language: string) {
+  const labels: Record<string, Record<string, string>> = {
+    zh: {
+      approved: "已批准",
+      paid: "已发放",
+      pending: "待处理",
+      rejected: "已拒绝",
+    },
+    en: {
+      approved: "Approved",
+      paid: "Paid",
+      pending: "Pending",
+      rejected: "Rejected",
+    },
   };
 
-  return labels[status] ?? status;
+  return (labels[language] ?? labels.en)[status] ?? status;
+}
+
+function getIntlLocale(language: string) {
+  const locales: Record<string, string> = {
+    ar: "ar",
+    en: "en-US",
+    es: "es-ES",
+    fr: "fr-FR",
+    ja: "ja-JP",
+    ko: "ko-KR",
+    zh: "zh-CN",
+  };
+
+  return locales[language] ?? "en-US";
 }
