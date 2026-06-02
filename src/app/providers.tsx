@@ -2,8 +2,12 @@
 
 import { getDefaultConfig, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import {
+  binanceWallet,
   coinbaseWallet,
   injectedWallet,
+  metaMaskWallet,
+  okxWallet,
+  trustWallet,
   walletConnectWallet,
 } from "@rainbow-me/rainbowkit/wallets";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -31,9 +35,13 @@ const config = getDefaultConfig({
       groupName: "Supported Wallets",
       wallets: walletConnectProjectId
         ? [
-            injectedWallet,
+            binanceWallet,
+            metaMaskWallet,
             coinbaseWallet,
+            trustWallet,
+            okxWallet,
             walletConnectWallet,
+            injectedWallet,
           ]
         : [
             injectedWallet,
