@@ -13,20 +13,25 @@ export function HeroSection() {
       className="relative flex min-h-[100svh] items-center justify-center overflow-hidden bg-black px-4 pb-10 pt-[calc(env(safe-area-inset-top)+4rem)] sm:px-8"
     >
       <video
-        className="absolute inset-0 h-full w-full object-cover"
+        className="absolute inset-0 h-full w-full object-cover sm:hidden"
         autoPlay
         muted
         loop
         playsInline
         poster="/images/station.avif"
         preload="metadata"
+        src="/videos/hero-mobile.mp4"
+      />
+      <video
+        className="absolute inset-0 hidden h-full w-full object-cover sm:block"
+        autoPlay
+        muted
+        loop
+        playsInline
+        poster="/images/station.avif"
+        preload="metadata"
+        src="/videos/Supercharger-Hero-Desktop.webm"
       >
-        <source src="/videos/hero-mobile.mp4" type="video/mp4" media="(max-width: 639px)" />
-        <source
-          src="/videos/Supercharger-Hero-Desktop.webm"
-          type="video/webm"
-          media="(min-width: 640px)"
-        />
       </video>
       <div className="absolute inset-0 bg-black/40" />
 
