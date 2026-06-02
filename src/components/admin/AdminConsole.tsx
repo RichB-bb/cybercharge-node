@@ -15,9 +15,10 @@ import type {
   RewardRecord,
   TransactionRecord,
   UserRecord,
+  WithdrawalRequestRecord,
 } from "@/lib/supabase";
 
-type AdminTab = "overview" | "customers" | "transactions" | "rewards";
+type AdminTab = "overview" | "customers" | "transactions" | "rewards" | "withdrawals";
 
 type OverviewStats = {
   totalCustomers: number;
@@ -26,6 +27,7 @@ type OverviewStats = {
   totalRewards: number;
   pendingRewards: number;
   paidRewards: number;
+  pendingWithdrawals: number;
 };
 
 type CustomerSummary = UserRecord & {
@@ -40,6 +42,8 @@ type TransactionRow = TransactionRecord & {
   ip_country: string;
   explorer_link: string;
 };
+
+type WithdrawalRow = WithdrawalRequestRecord;
 
 type CustomerDetail = {
   customer: UserRecord;
@@ -61,6 +65,7 @@ const sidebarItems: Array<{ id: AdminTab; label: string }> = [
   { id: "customers", label: "客户列表" },
   { id: "transactions", label: "充值记录" },
   { id: "rewards", label: "奖励管理" },
+  { id: "withdrawals", label: "提现管理" },
 ];
 
 const emptyStats: OverviewStats = {
@@ -70,6 +75,7 @@ const emptyStats: OverviewStats = {
   totalRewards: 0,
   pendingRewards: 0,
   paidRewards: 0,
+  pendingWithdrawals: 0,
 };
 
 export function AdminConsole() {
@@ -84,6 +90,7 @@ export function AdminConsole() {
   const [customers, setCustomers] = useState<CustomerSummary[]>([]);
   const [transactions, setTransactions] = useState<TransactionRow[]>([]);
   const [rewards, setRewards] = useState<RewardRecord[]>([]);
+  const [withdrawals, setWithdrawals] = useState<WithdrawalRow[]>([]);
   const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(null);
   const [customerDetail, setCustomerDetail] = useState<CustomerDetail | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -156,17 +163,19 @@ export function AdminConsole() {
     setNotice("");
 
     try {
-      const [overviewData, customersData, transactionsData, rewardsData] = await Promise.all([
+      const [overviewData, customersData, transactionsData, rewardsData, withdrawalsData] = await Promise.all([
         adminFetch<OverviewStats>("/api/admin/overview", key),
         adminFetch<{ customers: CustomerSummary[] }>("/api/admin/customers", key),
         adminFetch<{ transactions: TransactionRow[] }>("/api/admin/transactions", key),
         adminFetch<{ rewards: RewardRecord[] }>("/api/admin/rewards", key),
+        adminFetch<{ withdrawals: WithdrawalRow[] }>("/api/admin/withdrawals", key),
       ]);
 
       setOverview(overviewData);
       setCustomers(customersData.customers);
       setTransactions(transactionsData.transactions);
       setRewards(rewardsData.rewards);
+      setWithdrawals(withdrawalsData.withdrawals);
     } catch (error) {
       setNotice(error instanceof Error ? error.message : "无法加载后台数据。");
     } finally {
@@ -207,6 +216,24 @@ export function AdminConsole() {
       await loadAdminData(deviceKey);
     } catch (error) {
       setNotice(error instanceof Error ? error.message : "无法更新奖励状态。");
+    }
+  }
+
+  async function updateWithdrawalStatus(
+    id: string,
+    payload: { admin_note?: string; payout_tx_hash?: string; status: "approved" | "paid" | "rejected" },
+  ) {
+    setNotice("");
+
+    try {
+      await adminFetch<{ withdrawal: WithdrawalRow }>(`/api/admin/withdrawals/${id}`, deviceKey, {
+        method: "PATCH",
+        body: JSON.stringify(payload),
+      });
+      setNotice(`提现状态已更新为：${translateStatus(payload.status)}。`);
+      await loadAdminData(deviceKey);
+    } catch (error) {
+      setNotice(error instanceof Error ? error.message : "无法更新提现状态。");
     }
   }
 
@@ -343,6 +370,12 @@ export function AdminConsole() {
             rewards={rewards}
           />
         )}
+        {activeTab === "withdrawals" && (
+          <WithdrawalsPanel
+            onUpdateStatus={updateWithdrawalStatus}
+            withdrawals={withdrawals}
+          />
+        )}
       </section>
     </main>
   );
@@ -356,6 +389,7 @@ function OverviewPanel({ stats }: { stats: OverviewStats }) {
     { label: "奖励总额", value: formatAmount(stats.totalRewards), icon: Gift },
     { label: "待审核奖励", value: stats.pendingRewards, icon: Activity },
     { label: "已发放奖励", value: stats.paidRewards, icon: Activity },
+    { label: "待处理提现", value: stats.pendingWithdrawals, icon: Activity },
   ];
 
   return (
@@ -770,6 +804,127 @@ function RewardsPanel({
           </tbody>
         </table>
       </TableShell>
+    </div>
+  );
+}
+
+function WithdrawalsPanel({
+  onUpdateStatus,
+  withdrawals,
+}: {
+  onUpdateStatus: (
+    id: string,
+    payload: { admin_note?: string; payout_tx_hash?: string; status: "approved" | "paid" | "rejected" },
+  ) => void;
+  withdrawals: WithdrawalRow[];
+}) {
+  const [notes, setNotes] = useState<Record<string, string>>({});
+  const [txHashes, setTxHashes] = useState<Record<string, string>>({});
+
+  return (
+    <div className="mt-8">
+      <TableShell title="提现申请管理">
+        <table className="w-full min-w-[1320px] text-left text-sm">
+          <thead>
+            <tr className="border-b border-zinc-200 text-zinc-500">
+              {[
+                "钱包",
+                "金额",
+                "币种",
+                "网络",
+                "状态",
+                "申请时间",
+                "审核时间",
+                "支付时间",
+                "Tx Hash",
+                "备注",
+                "操作",
+              ].map((item) => (
+                <th key={item} className="py-3 pr-5 font-medium">{item}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {withdrawals.map((item) => (
+              <tr key={item.id} className="border-b border-zinc-100 align-top">
+                <td className="py-4 pr-5 font-mono text-xs">{shorten(item.wallet_address)}</td>
+                <td className="py-4 pr-5 text-zinc-500">{item.amount}</td>
+                <td className="py-4 pr-5 text-zinc-500">{item.asset}</td>
+                <td className="py-4 pr-5 text-zinc-500">{item.network}</td>
+                <td className="py-4 pr-5"><StatusBadge status={item.status} /></td>
+                <td className="py-4 pr-5 text-zinc-500">{formatDate(item.requested_at)}</td>
+                <td className="py-4 pr-5 text-zinc-500">{formatDate(item.reviewed_at)}</td>
+                <td className="py-4 pr-5 text-zinc-500">{formatDate(item.paid_at)}</td>
+                <td className="py-4 pr-5 font-mono text-xs">{shorten(item.payout_tx_hash)}</td>
+                <td className="py-4 pr-5 text-zinc-500">{item.admin_note ?? "-"}</td>
+                <td className="py-4 pr-5">
+                  <div className="grid min-w-80 gap-2">
+                    <textarea
+                      value={notes[item.id] ?? ""}
+                      onChange={(event) =>
+                        setNotes((current) => ({ ...current, [item.id]: event.target.value }))
+                      }
+                      placeholder="审核备注，可选"
+                      className="min-h-16 border border-zinc-200 p-2 text-xs outline-none focus:border-zinc-950"
+                    />
+                    <input
+                      value={txHashes[item.id] ?? ""}
+                      onChange={(event) =>
+                        setTxHashes((current) => ({ ...current, [item.id]: event.target.value }))
+                      }
+                      placeholder="Payout tx hash，标记已支付时必填"
+                      className="h-9 border border-zinc-200 px-2 font-mono text-xs outline-none focus:border-zinc-950"
+                    />
+                    <div className="flex flex-wrap gap-2">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          onUpdateStatus(item.id, {
+                            admin_note: notes[item.id],
+                            status: "approved",
+                          })
+                        }
+                        className="border border-zinc-200 px-2 py-1 text-xs font-medium hover:border-zinc-400"
+                      >
+                        Approve
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          onUpdateStatus(item.id, {
+                            admin_note: notes[item.id],
+                            status: "rejected",
+                          })
+                        }
+                        className="border border-zinc-200 px-2 py-1 text-xs font-medium hover:border-zinc-400"
+                      >
+                        Reject
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          onUpdateStatus(item.id, {
+                            admin_note: notes[item.id],
+                            payout_tx_hash: txHashes[item.id],
+                            status: "paid",
+                          })
+                        }
+                        className="bg-zinc-950 px-2 py-1 text-xs font-medium text-white"
+                      >
+                        Mark as Paid
+                      </button>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        {withdrawals.length === 0 && <p className="mt-5 text-sm text-zinc-500">暂无提现申请。</p>}
+      </TableShell>
+      <p className="mt-4 text-xs leading-5 text-zinc-500">
+        后台不会自动链上转账。请人工完成转账后填写 payout tx hash，再标记为已支付。
+      </p>
     </div>
   );
 }

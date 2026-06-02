@@ -7,6 +7,7 @@ import { RevenueCard } from "@/components/dashboard/RevenueCard";
 import { DeploymentExposure } from "@/components/dashboard/DeploymentExposure";
 import { TransactionHistory } from "@/components/dashboard/TransactionHistory";
 import { NetworkActivity } from "@/components/dashboard/NetworkActivity";
+import { WithdrawableBalance } from "@/components/dashboard/WithdrawableBalance";
 
 export default function DashboardPage() {
   return (
@@ -27,6 +28,7 @@ export default function DashboardPage() {
             <NetworkActivity />
           </div>
 
+          <WithdrawableBalance />
           <TransactionHistory />
         </div>
       </div>

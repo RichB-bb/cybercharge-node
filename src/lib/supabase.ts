@@ -56,6 +56,22 @@ export type RewardRecord = {
   paid_at: string | null;
 };
 
+export type WithdrawalRequestRecord = {
+  id: string;
+  user_id: string;
+  wallet_address: string;
+  amount: number;
+  asset: string;
+  network: string;
+  status: "pending" | "approved" | "rejected" | "paid" | string;
+  payout_tx_hash: string | null;
+  admin_note: string | null;
+  requested_at: string | null;
+  reviewed_at: string | null;
+  paid_at: string | null;
+  created_at: string | null;
+};
+
 const supabaseUrl = publicEnv.supabaseUrl;
 const supabaseAnonKey = publicEnv.supabaseAnonKey;
 

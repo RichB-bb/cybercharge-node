@@ -167,6 +167,58 @@ alter table public.rewards
 alter table public.rewards
   add column if not exists paid_at timestamptz;
 
+create table if not exists public.withdrawal_requests (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references public.users(id) on delete cascade,
+  wallet_address text not null,
+  amount numeric not null,
+  asset text not null default 'USDT',
+  network text not null default 'Ethereum',
+  status text not null default 'pending',
+  payout_tx_hash text,
+  admin_note text,
+  requested_at timestamptz default now(),
+  reviewed_at timestamptz,
+  paid_at timestamptz,
+  created_at timestamptz default now()
+);
+
+alter table public.withdrawal_requests
+  add column if not exists user_id uuid references public.users(id) on delete cascade;
+
+alter table public.withdrawal_requests
+  add column if not exists wallet_address text;
+
+alter table public.withdrawal_requests
+  add column if not exists amount numeric;
+
+alter table public.withdrawal_requests
+  add column if not exists asset text not null default 'USDT';
+
+alter table public.withdrawal_requests
+  add column if not exists network text not null default 'Ethereum';
+
+alter table public.withdrawal_requests
+  add column if not exists status text not null default 'pending';
+
+alter table public.withdrawal_requests
+  add column if not exists payout_tx_hash text;
+
+alter table public.withdrawal_requests
+  add column if not exists admin_note text;
+
+alter table public.withdrawal_requests
+  add column if not exists requested_at timestamptz default now();
+
+alter table public.withdrawal_requests
+  add column if not exists reviewed_at timestamptz;
+
+alter table public.withdrawal_requests
+  add column if not exists paid_at timestamptz;
+
+alter table public.withdrawal_requests
+  add column if not exists created_at timestamptz default now();
+
 create index if not exists users_wallet_address_idx
   on public.users (lower(wallet_address));
 
@@ -182,10 +234,17 @@ create index if not exists rewards_user_id_created_at_idx
 create index if not exists rewards_wallet_address_idx
   on public.rewards (lower(wallet_address));
 
+create index if not exists withdrawal_requests_user_id_created_at_idx
+  on public.withdrawal_requests (user_id, created_at desc);
+
+create index if not exists withdrawal_requests_wallet_address_idx
+  on public.withdrawal_requests (lower(wallet_address));
+
 alter table public.users enable row level security;
 alter table public.allocations enable row level security;
 alter table public.transactions enable row level security;
 alter table public.rewards enable row level security;
+alter table public.withdrawal_requests enable row level security;
 
 create or replace function public.current_wallet_address()
 returns text
@@ -217,6 +276,8 @@ drop policy if exists "Users can read own transactions" on public.transactions;
 drop policy if exists "Users can create own transactions" on public.transactions;
 drop policy if exists "Users can update own transactions" on public.transactions;
 drop policy if exists "Users can read own rewards" on public.rewards;
+drop policy if exists "Users can read own withdrawal requests" on public.withdrawal_requests;
+drop policy if exists "Users can create own withdrawal requests" on public.withdrawal_requests;
 
 create policy "Users can read own wallet profile"
   on public.users for select
@@ -305,11 +366,34 @@ create policy "Users can read own rewards"
     )
   );
 
+create policy "Users can read own withdrawal requests"
+  on public.withdrawal_requests for select
+  using (
+    exists (
+      select 1
+      from public.users
+      where users.id = withdrawal_requests.user_id
+        and lower(users.wallet_address) = public.current_wallet_address()
+    )
+  );
+
+create policy "Users can create own withdrawal requests"
+  on public.withdrawal_requests for insert
+  with check (
+    exists (
+      select 1
+      from public.users
+      where users.id = withdrawal_requests.user_id
+        and lower(users.wallet_address) = public.current_wallet_address()
+    )
+  );
+
 grant usage on schema public to anon, authenticated;
 grant select, insert, update on public.users to anon, authenticated;
 grant select, insert, update on public.allocations to anon, authenticated;
 grant select, insert, update on public.transactions to anon, authenticated;
 grant select on public.rewards to anon, authenticated;
+grant select, insert on public.withdrawal_requests to anon, authenticated;
 
 notify pgrst, 'reload schema';
 
