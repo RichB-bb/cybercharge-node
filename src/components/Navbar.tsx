@@ -5,7 +5,6 @@ import {
   useChainModal,
   useConnectModal,
 } from "@rainbow-me/rainbowkit";
-import { motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { useAccount, useChainId } from "wagmi";
@@ -26,10 +25,7 @@ export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <motion.header
-      initial={{ y: -24, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.8, ease: "easeOut" }}
+    <header
       className="fixed inset-x-0 top-0 z-50 bg-white/75 pt-[env(safe-area-inset-top)] backdrop-blur-xl"
     >
       <nav className="mx-auto grid h-14 max-w-7xl grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-4 sm:h-16 sm:px-8 lg:grid-cols-[1fr_auto_1fr]">
@@ -124,7 +120,7 @@ export function Navbar() {
           </div>
         </div>
       )}
-    </motion.header>
+    </header>
   );
 }
 

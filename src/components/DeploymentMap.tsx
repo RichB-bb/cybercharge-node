@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { CityName } from "./CityMap";
 
 const CityMap = dynamic(() => import("./CityMap"), { ssr: false });
@@ -27,10 +27,36 @@ const cities: CityDeployment[] = [
 
 export function DeploymentMap() {
   const [selectedCity, setSelectedCity] = useState<CityName>("Tokyo");
+  const [shouldLoadMap, setShouldLoadMap] = useState(false);
+  const sectionRef = useRef<HTMLElement | null>(null);
   const currentCity = cities.find((city) => city.name === selectedCity) ?? cities[0];
 
+  useEffect(() => {
+    const section = sectionRef.current;
+
+    if (!section) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShouldLoadMap(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "640px 0px" },
+    );
+
+    observer.observe(section);
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <section id="deployment-map" className="bg-white px-4 py-14 sm:px-8 sm:py-20">
+    <section
+      id="deployment-map"
+      ref={sectionRef}
+      className="bg-white px-4 py-14 sm:px-8 sm:py-20"
+    >
       <div className="mx-auto max-w-7xl">
         <div className="mx-auto max-w-3xl text-center">
           <h2 className="text-4xl font-semibold tracking-tight text-zinc-950 sm:text-6xl">
@@ -43,7 +69,13 @@ export function DeploymentMap() {
 
         <div className="mt-10 grid min-w-0 gap-8 sm:mt-14 lg:grid-cols-[1.55fr_0.8fr] lg:items-start lg:gap-12">
           <div className="min-w-0 overflow-hidden bg-zinc-100">
-            <CityMap city={selectedCity} />
+            {shouldLoadMap ? (
+              <CityMap city={selectedCity} />
+            ) : (
+              <div className="grid h-[420px] place-items-center bg-zinc-100 text-sm font-medium text-zinc-500 sm:h-[520px] lg:min-h-[520px]">
+                Loading deployment map...
+              </div>
+            )}
           </div>
 
           <div className="min-w-0">

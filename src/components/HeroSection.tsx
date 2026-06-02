@@ -18,9 +18,15 @@ export function HeroSection() {
         muted
         loop
         playsInline
+        poster="/images/station.avif"
         preload="metadata"
       >
-        <source src="/videos/Supercharger-Hero-Desktop.webm" type="video/webm" />
+        <source src="/videos/hero-mobile.mp4" type="video/mp4" media="(max-width: 639px)" />
+        <source
+          src="/videos/Supercharger-Hero-Desktop.webm"
+          type="video/webm"
+          media="(min-width: 640px)"
+        />
       </video>
       <div className="absolute inset-0 bg-black/40" />
 

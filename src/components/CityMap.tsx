@@ -1,7 +1,7 @@
 "use client";
 
 import L from "leaflet";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { CircleMarker, MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
 
 export type CityName =
@@ -201,7 +201,8 @@ const coverageRegions: Record<CityName, CoverageRegion[]> = {
 
 export default function CityMap({ city }: CityMapProps) {
   const config = cityConfig[city];
-  const markers = useMemo(() => buildCityMarkers(city), [city]);
+  const isCompact = useCompactMap();
+  const markers = useMemo(() => buildCityMarkers(city, isCompact), [city, isCompact]);
 
   return (
     <MapContainer
@@ -256,15 +257,34 @@ function MapViewSync({ city }: { city: CityName }) {
   return null;
 }
 
-function buildCityMarkers(city: CityName): StationMarker[] {
+function buildCityMarkers(city: CityName, isCompact: boolean): StationMarker[] {
   const positions = buildCoordinatePool(coverageRegions[city]);
-  const hubIndexes = selectHubIndexes(positions);
+  const displayPositions = isCompact
+    ? positions.filter((_, index) => index % 2 === 0)
+    : positions;
+  const hubIndexes = selectHubIndexes(displayPositions);
 
-  return positions.map((position, index) => ({
+  return displayPositions.map((position, index) => ({
     hubLabel: hubIndexes.includes(index) ? hubIndexes.indexOf(index) + 1 : undefined,
     id: index + 1,
     position,
   }));
+}
+
+function useCompactMap() {
+  const [isCompact, setIsCompact] = useState(false);
+
+  useEffect(() => {
+    const query = window.matchMedia("(max-width: 640px)");
+    const update = () => setIsCompact(query.matches);
+
+    update();
+
+    query.addEventListener("change", update);
+    return () => query.removeEventListener("change", update);
+  }, []);
+
+  return isCompact;
 }
 
 function buildCoordinatePool(regions: CoverageRegion[]) {

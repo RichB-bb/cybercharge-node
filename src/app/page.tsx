@@ -1,10 +1,18 @@
-import { DeploymentMap } from "@/components/DeploymentMap";
+import dynamic from "next/dynamic";
 import { Footer } from "@/components/Footer";
 import { HeroSection } from "@/components/HeroSection";
 import { ImmersiveImageSection } from "@/components/ImmersiveImageSection";
 import { Navbar } from "@/components/Navbar";
-import { PaymentSection } from "@/components/PaymentSection";
-import { PaymentTimeline } from "@/components/PaymentTimeline";
+
+const DeploymentMap = dynamic(() =>
+  import("@/components/DeploymentMap").then((module) => module.DeploymentMap),
+);
+const PaymentTimeline = dynamic(() =>
+  import("@/components/PaymentTimeline").then((module) => module.PaymentTimeline),
+);
+const PaymentSection = dynamic(() =>
+  import("@/components/PaymentSection").then((module) => module.PaymentSection),
+);
 
 export default function Home() {
   return (
@@ -14,10 +22,12 @@ export default function Home() {
       <ImmersiveImageSection
         id="infrastructure"
         image="/images/station.avif"
+        mobileImage="/images/station-mobile.jpg"
         copyKey="station"
       />
       <ImmersiveImageSection
         image="/images/deployment.avif"
+        mobileImage="/images/deployment-mobile.jpg"
         copyKey="assets"
       />
       <DeploymentMap />
