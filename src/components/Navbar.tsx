@@ -6,7 +6,7 @@ import {
   useConnectModal,
 } from "@rainbow-me/rainbowkit";
 import { Menu, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAccount, useChainId } from "wagmi";
 import { languages, useLanguage } from "@/lib/i18n";
 import { BrandLogo } from "./BrandLogo";
@@ -126,12 +126,27 @@ export function Navbar() {
 
 function CompactConnectButton() {
   const { t } = useLanguage();
-  const { address, isConnected } = useAccount();
+  const { address, isConnected, isConnecting, isReconnecting } = useAccount();
   const chainId = useChainId();
   const { openAccountModal } = useAccountModal();
   const { openChainModal } = useChainModal();
   const { openConnectModal } = useConnectModal();
+  const [canShowDisconnected, setCanShowDisconnected] = useState(false);
   const isUnsupportedChain = Boolean(isConnected && chainId && !supportedChainIds.has(chainId));
+  const isRestoringWallet = isConnecting || isReconnecting || (!canShowDisconnected && !address);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setCanShowDisconnected(true), 900);
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  if (isRestoringWallet && !address) {
+    return (
+      <span className="inline-flex h-9 items-center rounded-full bg-zinc-100 px-3 text-xs font-semibold text-zinc-500 sm:px-4">
+        ...
+      </span>
+    );
+  }
 
   if (!isConnected || !address) {
     return (

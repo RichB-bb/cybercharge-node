@@ -15,7 +15,7 @@ const assets = ["USDT", "USDC", "ETH"] as const;
 const networks = ["Ethereum", "Base", "Polygon", "BSC"] as const;
 
 export function WithdrawableBalance() {
-  const { address, isConnected } = useAccount();
+  const { address, isConnected, isConnecting, isReconnecting } = useAccount();
   const { language, t } = useLanguage();
   const [balances, setBalances] = useState<Balance[]>([]);
   const [rewards, setRewards] = useState<RewardRecord[]>([]);
@@ -73,6 +73,10 @@ export function WithdrawableBalance() {
   }
 
   useEffect(() => {
+    if (isConnecting || isReconnecting) {
+      return;
+    }
+
     if (!isConnected || !address) {
       setBalances([]);
       setRewards([]);
@@ -81,7 +85,7 @@ export function WithdrawableBalance() {
     }
 
     void loadWithdrawalData(address);
-  }, [address, isConnected]);
+  }, [address, isConnected, isConnecting, isReconnecting]);
 
   const selectedBalance = useMemo(() => {
     const approved = balances.find((item) => item.asset === selectedAsset)?.amount ?? 0;

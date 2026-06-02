@@ -6,15 +6,27 @@ import { useAccount } from "wagmi";
 import { useLanguage } from "@/lib/i18n";
 
 export function DashboardHero() {
-  const { address, isConnected } = useAccount();
+  const { address, isConnected, isConnecting, isReconnecting } = useAccount();
   const { openConnectModal } = useConnectModal();
   const { t } = useLanguage();
+  const [canShowDisconnected, setCanShowDisconnected] = useState(false);
   const [userSyncStatus, setUserSyncStatus] = useState<"ready" | "pending" | "found" | "syncing">(
     "ready",
   );
   const displayAddress = address ? `${address.slice(0, 6)}...${address.slice(-4)}` : null;
+  const isRestoringWallet = isConnecting || isReconnecting || (!canShowDisconnected && !address);
 
   useEffect(() => {
+    const timer = window.setTimeout(() => setCanShowDisconnected(true), 900);
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    if (isConnecting || isReconnecting) {
+      setUserSyncStatus("pending");
+      return;
+    }
+
     if (!isConnected || !address) {
       setUserSyncStatus("pending");
       return;
@@ -52,7 +64,7 @@ export function DashboardHero() {
     return () => {
       isMounted = false;
     };
-  }, [address, isConnected]);
+  }, [address, isConnected, isConnecting, isReconnecting]);
 
   return (
     <section className="grid gap-6 border-b border-zinc-200 pb-6 sm:pb-8 lg:grid-cols-[1fr_auto] lg:items-end">
@@ -70,12 +82,20 @@ export function DashboardHero() {
 
       <div className="min-w-0 border-t border-zinc-200 pt-5 lg:min-w-72">
         <p className="text-sm text-zinc-500">
-          {isConnected ? t.dashboard.connectedWallet : t.dashboard.noWalletConnected}
+          {isRestoringWallet
+            ? t.dashboard.reconnectingWallet
+            : isConnected
+              ? t.dashboard.connectedWallet
+              : t.dashboard.noWalletConnected}
         </p>
         {displayAddress ? (
           <p className="mt-2 truncate font-mono text-2xl font-semibold text-zinc-950">
             {displayAddress}
           </p>
+        ) : isRestoringWallet ? (
+          <div className="mt-4 h-11 w-full bg-zinc-100 px-4 text-sm font-semibold leading-[2.75rem] text-zinc-500">
+            {t.dashboard.reconnectingWallet}
+          </div>
         ) : (
           <button
             type="button"
@@ -86,7 +106,11 @@ export function DashboardHero() {
           </button>
         )}
         <p className="mt-3 text-sm leading-6 text-zinc-500">
-          {isConnected ? t.dashboard.connectedWalletHelp : t.dashboard.disconnectedWalletHelp}
+          {isRestoringWallet
+            ? t.dashboard.walletIdentityPending
+            : isConnected
+              ? t.dashboard.connectedWalletHelp
+              : t.dashboard.disconnectedWalletHelp}
         </p>
         <p className="mt-1 text-xs text-zinc-400">
           {getUserSyncLabel(userSyncStatus, t.dashboard)}

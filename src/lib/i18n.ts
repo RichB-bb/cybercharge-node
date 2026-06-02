@@ -119,6 +119,7 @@ type Translation = {
     rewardsSubtitle: string;
     connectedWallet: string;
     noWalletConnected: string;
+    reconnectingWallet: string;
     connectWallet: string;
     connectedWalletHelp: string;
     disconnectedWalletHelp: string;
@@ -390,6 +391,7 @@ const en: Translation = {
     rewardsSubtitle: "Your available rewards, withdrawal requests, and payout history.",
     connectedWallet: "Connected Wallet",
     noWalletConnected: "No Wallet Connected",
+    reconnectingWallet: "Restoring wallet session...",
     connectWallet: "Connect Wallet",
     connectedWalletHelp: "Withdrawals are sent to this connected wallet.",
     disconnectedWalletHelp: "Connect Wallet to view rewards and request withdrawals.",
@@ -577,6 +579,7 @@ export const translations: Record<Language, Translation> = {
       rewardsSubtitle: "查看可提现奖励、提现申请和打款记录。",
       connectedWallet: "已连接钱包",
       noWalletConnected: "未连接钱包",
+      reconnectingWallet: "正在恢复钱包连接...",
       connectWallet: "连接钱包",
       connectedWalletHelp: "提现将发放到当前连接的钱包。",
       disconnectedWalletHelp: "连接钱包后查看奖励并提交提现申请。",
