@@ -48,7 +48,7 @@ const chains: ChainOption[] = [
 
 const allocations: AllocationOption[] = [10, 25, 50, 100];
 const tokens: TokenOption[] = ["ETH", "USDT", "USDC"];
-const fullNodeUsdt = 1999;
+const testPaymentUsdt = 1;
 const fallbackEthPrice = 4200;
 const treasuryWallet = (process.env.NEXT_PUBLIC_TREASURY_WALLET ??
   "0x3a6cF210C5704790463ccE4eCC3EAD0E8Ce571C5") as `0x${string}`;
@@ -170,7 +170,7 @@ export function PaymentSection() {
     return () => controller.abort();
   }, []);
 
-  const usdtAmount = (fullNodeUsdt * selectedAllocation) / 100;
+  const usdtAmount = testPaymentUsdt;
   const effectiveEthPrice = ethPrice ?? fallbackEthPrice;
   const ethAmount = usdtAmount / effectiveEthPrice;
   const selectedTokenConfig = getTokenConfig(selectedChain, selectedToken);
