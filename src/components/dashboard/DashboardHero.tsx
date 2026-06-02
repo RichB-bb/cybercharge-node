@@ -53,16 +53,16 @@ export function DashboardHero() {
   }, [address, isConnected, language]);
 
   return (
-    <section className="grid gap-8 border-b border-zinc-200 pb-10 lg:grid-cols-[1fr_auto] lg:items-end">
+    <section className="grid gap-6 border-b border-zinc-200 pb-6 sm:pb-8 lg:grid-cols-[1fr_auto] lg:items-end">
       <div>
         <p className="text-xs font-medium uppercase tracking-[0.24em] text-red-600">
           CyberCharge
         </p>
-        <h1 className="mt-4 text-4xl font-semibold tracking-tight text-zinc-950 sm:text-6xl">
-          {t.dashboard.title}
+        <h1 className="mt-3 text-4xl font-semibold tracking-tight text-zinc-950 sm:text-5xl">
+          Rewards Dashboard
         </h1>
-        <p className="mt-4 max-w-3xl text-base leading-7 text-zinc-500 sm:text-xl sm:leading-8">
-          {t.dashboard.subtitle}
+        <p className="mt-3 max-w-2xl text-base leading-7 text-zinc-500 sm:text-lg sm:leading-8">
+          Your available rewards, withdrawal requests, and payout history.
         </p>
       </div>
 
@@ -85,8 +85,8 @@ export function DashboardHero() {
         )}
         <p className="mt-3 text-sm leading-6 text-zinc-500">
           {isConnected
-            ? "Web3 wallet connected."
-            : "Connect Wallet to view your allocations and transactions."}
+            ? "Withdrawals are sent to this connected wallet."
+            : "Connect Wallet to view rewards and request withdrawals."}
         </p>
         <p className="mt-1 text-xs text-zinc-400">{userSyncStatus}</p>
       </div>

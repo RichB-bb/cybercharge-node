@@ -95,6 +95,7 @@ export function WithdrawableBalance() {
   }, [balances, selectedAsset, withdrawals]);
 
   const approvedRewards = rewards.filter((reward) => reward.status === "approved");
+  const displayAddress = address ? `${address.slice(0, 6)}...${address.slice(-4)}` : "Not connected";
 
   async function submitWithdrawal(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -149,22 +150,24 @@ export function WithdrawableBalance() {
   }
 
   return (
-    <section className="mt-5 border border-zinc-200 bg-white p-5 sm:p-8">
-      <div className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr]">
+    <section className="mt-6 border border-zinc-200 bg-white p-4 sm:p-6 lg:p-8">
+      <div className="grid gap-6 lg:grid-cols-[0.8fr_1.2fr]">
         <div>
           <div className="flex items-start justify-between gap-6">
             <div>
               <p className="text-sm font-medium uppercase tracking-[0.18em] text-red-600">
                 Rewards
               </p>
-              <h2 className="mt-3 text-3xl font-semibold tracking-tight text-zinc-950">
+              <h2 className="mt-2 text-3xl font-semibold tracking-tight text-zinc-950 sm:text-4xl">
                 Withdrawable Balance
               </h2>
             </div>
             <CircleDollarSign size={24} className="shrink-0 text-red-600" />
           </div>
 
-          <div className="mt-8 grid gap-3 sm:grid-cols-3">
+          <p className="mt-4 text-sm leading-6 text-zinc-500">Your available rewards</p>
+
+          <div className="mt-5 grid grid-cols-3 gap-2 sm:gap-3">
             {assets.map((asset) => {
               const value = balances.find((item) => item.asset === asset)?.amount ?? 0;
 
@@ -173,13 +176,13 @@ export function WithdrawableBalance() {
                   key={asset}
                   type="button"
                   onClick={() => setSelectedAsset(asset)}
-                  className={`border p-4 text-left transition ${
+                  className={`border p-3 text-left transition sm:p-4 ${
                     selectedAsset === asset
                       ? "border-zinc-950 bg-zinc-950 text-white"
                       : "border-zinc-200 bg-white text-zinc-950 hover:border-zinc-400"
                   }`}
                 >
-                  <p className="text-2xl font-semibold tracking-tight">{formatAmount(value)}</p>
+                  <p className="text-xl font-semibold tracking-tight sm:text-2xl">{formatAmount(value)}</p>
                   <p className="mt-1 text-sm opacity-70">{asset}</p>
                 </button>
               );
@@ -187,8 +190,7 @@ export function WithdrawableBalance() {
           </div>
 
           <p className="mt-5 text-sm leading-6 text-zinc-500">
-            Rewards are based on admin-confirmed records. Withdrawals are manually reviewed.
-            Processing times may vary. Rewards are not guaranteed.
+            Withdrawals are manually reviewed. Rewards are not guaranteed.
           </p>
         </div>
 
@@ -196,6 +198,15 @@ export function WithdrawableBalance() {
           <h3 className="text-2xl font-semibold tracking-tight text-zinc-950">
             Request Withdrawal
           </h3>
+          <p className="mt-2 text-sm leading-6 text-zinc-500">
+            Withdraw to your connected wallet
+          </p>
+          <div className="mt-4 border-y border-zinc-200 py-4">
+            <p className="text-sm font-medium text-zinc-500">Withdrawal wallet</p>
+            <p className="mt-2 break-all font-mono text-lg font-semibold text-zinc-950">
+              {isConnected ? address : displayAddress}
+            </p>
+          </div>
           <div className="mt-5 grid gap-4 sm:grid-cols-3">
             <label className="block sm:col-span-1">
               <span className="text-sm font-medium text-zinc-500">Amount</span>
@@ -260,7 +271,7 @@ export function WithdrawableBalance() {
             right: translateRewardType(reward.reward_type),
             sub: reward.created_at ? formatDate(reward.created_at) : "-",
           }))}
-          title="Reward Details"
+          title="Reward History"
         />
         <RecordList
           empty="No withdrawal requests found."
@@ -272,7 +283,7 @@ export function WithdrawableBalance() {
               ? `${shorten(withdrawal.payout_tx_hash)} · ${withdrawal.network}`
               : `${withdrawal.network} · ${formatDate(withdrawal.created_at)}`,
           }))}
-          title="Withdrawal Requests"
+          title="Withdrawal History"
         />
       </div>
     </section>
