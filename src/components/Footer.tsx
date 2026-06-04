@@ -6,7 +6,7 @@ import { BrandLogo } from "./BrandLogo";
 const footerLinks = [
   { labelKey: "terms", href: "/terms" },
   { labelKey: "privacy", href: "/privacy" },
-  { labelKey: "riskDisclosure", href: "/#risk-disclosure" },
+  { labelKey: "riskDisclosure", href: "/risk-disclosure" },
   { labelKey: "contact", href: "mailto:contact@tslcharge.cc" },
 ] as const;
 
