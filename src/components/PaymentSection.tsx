@@ -614,16 +614,10 @@ export function PaymentSection() {
       )}
       {isSuccessOpen && (
         <PaymentSuccessDialog
-          allocation={allocationLabel}
-          amount={transferDisplayAmount}
-          asset={selectedToken}
           closeLabel={(paymentSuccessCopy[language] ?? paymentSuccessCopy.en).close}
-          explorerLink={explorerLink}
           message={(paymentSuccessCopy[language] ?? paymentSuccessCopy.en).message}
-          network={selectedChain}
           onClose={() => setIsSuccessOpen(false)}
           title={(paymentSuccessCopy[language] ?? paymentSuccessCopy.en).title}
-          txHash={latestTxHash}
         />
       )}
     </section>
@@ -742,58 +736,26 @@ function PaymentConfirmationDialog({
 }
 
 function PaymentSuccessDialog({
-  allocation,
-  amount,
-  asset,
   closeLabel,
-  explorerLink,
   message,
-  network,
   onClose,
   title,
-  txHash,
 }: {
-  allocation: string;
-  amount: string;
-  asset: string;
   closeLabel: string;
-  explorerLink: string | null;
   message: string;
-  network: string;
   onClose: () => void;
   title: string;
-  txHash: `0x${string}` | null;
 }) {
   return (
     <div className="fixed inset-0 z-[90] flex items-end justify-center bg-black/35 px-4 pb-4 pt-20 sm:items-center sm:p-6">
-      <div className="w-full max-w-lg bg-white p-6 shadow-2xl sm:p-8">
+      <div className="w-full max-w-md bg-white p-6 text-center shadow-2xl sm:p-8">
         <p className="text-xs font-medium uppercase tracking-[0.22em] text-red-600">
-          Payment Receipt
+          CyberCharge
         </p>
         <h3 className="mt-3 text-3xl font-semibold tracking-tight text-zinc-950">
           {title}
         </h3>
-        <p className="mt-4 max-w-md text-base leading-7 text-zinc-500">{message}</p>
-
-        <div className="mt-7 space-y-4 text-sm">
-          <PaymentDetail label="Amount" value={amount} />
-          <PaymentDetail label="Asset" value={asset} />
-          <PaymentDetail label="Network" value={network} />
-          <PaymentDetail label="Transaction Hash" value={txHash ? shortenAddress(txHash) : "Confirmed"} />
-          <PaymentDetail label="Allocation Created" value={allocation} />
-        </div>
-
-        {explorerLink && (
-          <a
-            href={explorerLink}
-            target="_blank"
-            rel="noreferrer"
-            className="mt-6 inline-flex text-sm font-medium text-zinc-950 underline underline-offset-4"
-          >
-            View on Explorer
-          </a>
-        )}
-
+        <p className="mx-auto mt-4 max-w-xs text-base leading-7 text-zinc-500">{message}</p>
         <a
           href="/dashboard"
           className="mt-7 inline-flex h-11 w-full items-center justify-center border border-zinc-950 px-4 text-sm font-semibold text-zinc-950 transition hover:bg-zinc-950 hover:text-white"
