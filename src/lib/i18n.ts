@@ -202,8 +202,8 @@ const en: Translation = {
     purchaseAllocation: "Purchase Allocation",
   },
   hero: {
-    title: "BUILDING THE INFRASTRUCTURE OF THE FUTURE",
-    subtitle: "We are building the systems and technologies necessary to provide global connectivity on Earth and beyond, to understand the true nature of the universe, and to extend the light of consciousness to the stars.",
+    title: "Invest in EV Charging Infrastructure",
+    subtitle: "Revenue-sharing nodes backed by real-world deployment.",
     invest: "Invest Now",
     deployment: "View Deployment",
   },
