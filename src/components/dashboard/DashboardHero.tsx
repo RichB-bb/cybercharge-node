@@ -75,9 +75,6 @@ export function DashboardHero() {
         <h1 className="mt-3 text-4xl font-semibold tracking-tight text-zinc-950 sm:text-5xl">
           {t.dashboard.title}
         </h1>
-        <p className="mt-3 max-w-2xl text-base leading-7 text-zinc-500 sm:text-lg sm:leading-8">
-          {t.dashboard.subtitle}
-        </p>
       </div>
 
       <div className="min-w-0 border-t border-zinc-200 pt-5 lg:min-w-72">
@@ -105,16 +102,6 @@ export function DashboardHero() {
             {t.dashboard.connectWallet}
           </button>
         )}
-        <p className="mt-3 text-sm leading-6 text-zinc-500">
-          {isRestoringWallet
-            ? t.dashboard.walletIdentityPending
-            : isConnected
-              ? t.dashboard.connectedWalletHelp
-              : t.dashboard.disconnectedWalletHelp}
-        </p>
-        <p className="mt-1 text-xs text-zinc-400">
-          {getUserSyncLabel(userSyncStatus, t.dashboard)}
-        </p>
       </div>
     </section>
   );

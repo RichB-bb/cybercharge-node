@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { ArrowRight, WalletCards } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useAccount } from "wagmi";
 import type {
   RewardRecord,
@@ -231,9 +231,6 @@ function BalancePanel({
         {isLoading ? "..." : formatAmount(selectedBalance)}
       </h2>
       <p className="mt-2 text-sm font-medium text-zinc-500">{selectedAsset}</p>
-      <p className="mt-5 text-sm leading-6 text-zinc-500">
-        Withdrawable Balance from admin-confirmed rewards. Manual withdrawal review applies.
-      </p>
 
       <div className="mt-5 grid grid-cols-3 gap-2">
         {assets.map((asset) => {
@@ -296,11 +293,9 @@ function WithdrawalForm({
             Withdraw to connected wallet
           </h2>
         </div>
-        <WalletCards size={24} className="shrink-0 text-red-600" />
       </div>
 
       <div className="mt-5 border-y border-zinc-200 py-4">
-        <p className="text-sm text-zinc-500">Withdrawal wallet</p>
         <p className="mt-2 break-all font-mono text-sm font-semibold text-zinc-950">
           {isConnected && address ? address : "No wallet connected"}
         </p>
@@ -374,7 +369,7 @@ function MyAllocation({ allocation }: { allocation: DashboardSummary["allocation
             My Allocation
           </p>
           <h2 className="mt-3 text-3xl font-semibold tracking-tight text-zinc-950">
-            {hasAllocation ? `${formatAmount(allocation.totalAllocation)}%` : "No active allocation yet."}
+            {hasAllocation ? `${formatAmount(allocation.totalAllocation)}%` : "0%"}
           </h2>
         </div>
         {!hasAllocation && (
@@ -431,14 +426,9 @@ function EarningsActivityChart({ activity }: { activity: RewardActivity[] }) {
       <h2 className="mt-3 text-3xl font-semibold tracking-tight text-zinc-950">
         Earnings Activity
       </h2>
-      <p className="mt-3 max-w-2xl text-sm leading-6 text-zinc-500">
-        Rewards will appear after admin-confirmed infrastructure activity.
-      </p>
 
       {activity.length === 0 ? (
-        <p className="mt-8 text-sm text-zinc-500">
-          Rewards will appear after admin-confirmed infrastructure activity.
-        </p>
+        <div className="mt-8 h-24 border-t border-zinc-100" />
       ) : (
         <div className="mt-8 flex h-44 items-end gap-2 border-b border-zinc-200">
           {activity.slice(-14).map((item) => (
@@ -461,7 +451,7 @@ function RewardHistory({ rewards }: { rewards: RewardRecord[] }) {
   return (
     <RecordSection title="Reward History">
       {rewards.length === 0 ? (
-        <EmptyRow text="Rewards will appear after admin-confirmed infrastructure activity." />
+        <EmptyRow />
       ) : (
         rewards.map((reward) => (
           <div key={reward.id} className="grid gap-2 border-b border-zinc-100 py-4 sm:grid-cols-[1fr_1fr_1fr_1fr_1.4fr]">
@@ -481,7 +471,7 @@ function WithdrawalHistory({ withdrawals }: { withdrawals: WithdrawalRequestReco
   return (
     <RecordSection title="Withdrawal History">
       {withdrawals.length === 0 ? (
-        <EmptyRow text="No withdrawal requests found." />
+        <EmptyRow />
       ) : (
         withdrawals.map((withdrawal) => (
           <div key={withdrawal.id} className="grid gap-2 border-b border-zinc-100 py-4 sm:grid-cols-[1fr_1fr_1fr_1fr_1.4fr]">
@@ -506,8 +496,8 @@ function RecordSection({ children, title }: { children: React.ReactNode; title: 
   );
 }
 
-function EmptyRow({ text }: { text: string }) {
-  return <p className="text-sm leading-6 text-zinc-500">{text}</p>;
+function EmptyRow() {
+  return <div className="h-12 border-t border-zinc-100" />;
 }
 
 function Cell({ label, value }: { label: string; value: string }) {
